@@ -6,7 +6,7 @@
 
 
 [![NPM](https://img.shields.io/npm/v/@bit-about/state.svg)](https://www.npmjs.com/package/@bit-about/state) 
-![npm bundle size](https://img.shields.io/bundlephobia/min/@bit-about/state)
+![npm bundle size](https://img.shields.io/bundlephobia/min/@bit-about/state?label=size)
 ![Codecov](https://img.shields.io/codecov/c/github/bit-about/state)
 
 ## Install
