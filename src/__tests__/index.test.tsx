@@ -1,4 +1,4 @@
-import { ExampleComponent } from '../src/index'
+import { ExampleComponent } from '../index'
 
 describe('ExampleComponent', () => {
   it('is truthy', () => {
