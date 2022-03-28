@@ -16,7 +16,6 @@ npm install --save @bit-about/state
 import React, { Component } from 'react'
 
 import MyComponent from '@bit-about/state'
-import '@bit-about/state/dist/index.css'
 
 class Example extends Component {
   render() {
@@ -27,4 +26,4 @@ class Example extends Component {
 
 ## License
 
-MIT © [Gareneye](https://github.com/Gareneye)
+MIT © [Maciej Olejnik](https://github.com/Gareneye)
