@@ -4,7 +4,10 @@
 
 > Tiny and powerfull state managment library.
 
-[![NPM](https://img.shields.io/npm/v/@bit-about/state.svg)](https://www.npmjs.com/package/@bit-about/state) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+
+[![NPM](https://img.shields.io/npm/v/@bit-about/state.svg)](https://www.npmjs.com/package/@bit-about/state) 
+![npm bundle size](https://img.shields.io/bundlephobia/min/@bit-about/state)
+![Codecov](https://img.shields.io/codecov/c/github/bit-about/state)
 
 ## Install
 
