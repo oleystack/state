@@ -10,6 +10,7 @@ import {
   ContextValue,
   ContextVersion
 } from './types'
+import { compareFunc as isEqual } from './compare'
 
 const isDev = process.env.NODE_ENV !== 'production'
 
@@ -20,25 +21,6 @@ const canUseDOM = (): boolean =>
 const useIsomorphicLayoutEffect: typeof React.useEffect = canUseDOM()
   ? React.useLayoutEffect
   : React.useEffect
-
-function isEqual(x: any, y: any): boolean {
-  // One level deep
-  if (Array.isArray(x) && Array.isArray(y)) {
-    if (x.length !== y.length) {
-      return false
-    }
-
-    for (let i = 0; i < x.length; i++) {
-      if (!Object.is(x[i], y[i])) {
-        return false
-      }
-    }
-
-    return true
-  }
-
-  return Object.is(x, y)
-}
 
 const createProvider = <Value>(
   Original: React.Provider<ContextValue<Value>>

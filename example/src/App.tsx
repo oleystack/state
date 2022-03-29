@@ -42,15 +42,15 @@ const Alice = () => {
  * Buttons
  */
 const Buttons = () => {
-  // const [setAlice, setBob] = useTest((state) => [
-  //   state.setAliceValue,
-  //   state.setBobValue
-  // ])
+  const [setAlice, setBob] = useTest((state) => [
+    state.setAliceValue,
+    state.setBobValue
+  ])
 
-  const { setAlice, setBob } = useTest((state) => ({
-    setAlice: state.setAliceValue,
-    setBob: state.setBobValue
-  }))
+  // const { setAlice, setBob } = useTest((state) => ({
+  //   setAlice: state.setAliceValue,
+  //   setBob: state.setBobValue
+  // }))
 
   return (
     <div>
