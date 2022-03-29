@@ -17,15 +17,28 @@ npm install --save @bit-about/state
 ## Usage
 
 ```tsx
-import React, { Component } from 'react'
+const useBaseState = () => {
+  const [alice, setAlice] = useState(0)
+  const [bob, setBob] = useState(0)
 
-import MyComponent from '@bit-about/state'
-
-class Example extends Component {
-  render() {
-    return <MyComponent />
-  }
+  return { alice, setAlice, bob, setBob }
 }
+
+const [Provider, useBase] = state(useBaseState)
+```
+
+```tsx
+// Always rerender
+const { alice, bob } = useTest()
+
+// Rerender when alice changed
+const alice = useTest( state => state.alice )
+
+// Rerender when alice and bob changed
+const [alice, bob] = useTest( state => [state.alice, state.bob] )
+
+// Rerender when alice and bob changed
+const { alice, bob } = useTest( state => ({ alice: state.alice, bob: state.bob }) )
 ```
 
 ## License
