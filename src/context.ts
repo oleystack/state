@@ -21,22 +21,24 @@ const useIsomorphicLayoutEffect: typeof React.useEffect = canUseDOM()
   ? React.useLayoutEffect
   : React.useEffect
 
-/**
- * inlined Object.is polyfill to avoid requiring consumers ship their own
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function is(x: any, y: any) {
-  return (
-    (x === y && (x !== 0 || 1 / x === 1 / y)) || (x !== x && y !== y) // eslint-disable-line no-self-compare
-  )
-}
+function isEqual(x: any, y: any): boolean {
+  // One level deep
+  if (Array.isArray(x) && Array.isArray(y)) {
+    if (x.length !== y.length) {
+      return false
+    }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const objectIs: (x: any, y: any) => boolean =
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore fallback to native if it exists (not in IE11)
-  typeof Object.is === 'function' ? Object.is : is
+    for (let i = 0; i < x.length; i++) {
+      if (!Object.is(x[i], y[i])) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  return Object.is(x, y)
+}
 
 const createProvider = <Value>(
   Original: React.Provider<ContextValue<Value>>
@@ -102,7 +104,7 @@ export const createContext = <Value>(defaultValue: Value): Context<Value> => {
 
 export function useContextSelector<Value, SelectedValue>(
   context: Context<Value>,
-  selector: ContextSelector<Value, SelectedValue>
+  selector?: ContextSelector<Value, SelectedValue>
 ): SelectedValue
 
 export function useContextSelector<Value>(context: Context<Value>): Value
@@ -141,7 +143,7 @@ export function useContextSelector<Value, SelectedValue>(
       }
 
       if (payload[0] <= version) {
-        if (objectIs(prevState[1], selected)) {
+        if (isEqual(prevState[1], selected)) {
           return prevState // bail out
         }
 
@@ -149,13 +151,13 @@ export function useContextSelector<Value, SelectedValue>(
       }
 
       try {
-        if (objectIs(prevState[0], payload[1])) {
+        if (isEqual(prevState[0], payload[1])) {
           return prevState // do not update
         }
 
         const nextSelected = selector?.(payload[1]) ?? payload[1]
 
-        if (objectIs(prevState[1], nextSelected)) {
+        if (isEqual(prevState[1], nextSelected)) {
           return prevState // do not update
         }
 
@@ -170,7 +172,7 @@ export function useContextSelector<Value, SelectedValue>(
     [value, selected] as const
   )
 
-  if (!objectIs(state[1], selected)) {
+  if (!isEqual(state[1], selected)) {
     // schedule re-render
     // this is safe because it's self contained
     dispatch(undefined)

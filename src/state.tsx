@@ -13,7 +13,7 @@ function state<Props, Value = undefined>(
   }
 
   const useBindContextSelector = <SelectedValue,>(
-    selector: ContextSelector<Value, SelectedValue>
+    selector?: ContextSelector<Value, SelectedValue>
   ) => useContextSelector(context, selector)
 
   return [Provider, useBindContextSelector]
