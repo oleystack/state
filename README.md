@@ -17,6 +17,8 @@ npm install --save @bit-about/state
 ## Usage
 
 ```tsx
+import { state } from '@bit-about/state'
+
 const useBaseState = () => {
   const [alice, setAlice] = useState(0)
   const [bob, setBob] = useState(0)
