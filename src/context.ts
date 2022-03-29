@@ -3,37 +3,13 @@ import {
   unstable_NormalPriority as NormalPriority,
   unstable_runWithPriority as runWithPriority
 } from 'scheduler'
-
-type ContextVersion = number
-type Provider<Props> = React.FC<Props>
-type ContextSelectorHook<Value> = <SelectedValue>(
-  selector: ContextSelector<Value, SelectedValue>
-) => SelectedValue
-type ContextTuple<Props, Value> = [Provider<Props>, ContextSelectorHook<Value>]
-
-type Context<Props, Value> = React.Context<Value> & {
-  Provider: Provider<Props>
-  // We don't support Consumer API
-  Consumer: never
-}
-
-type ContextValue<Value> = {
-  /** Holds a set of subscribers from components. */
-  listeners: ((payload: readonly [ContextVersion, Value]) => void)[]
-
-  /** Holds an actual value of React's context that will be propagated down for computations. */
-  value: React.MutableRefObject<Value>
-
-  /** A version field is used to sync a context value and consumers. */
-  version: React.MutableRefObject<ContextVersion>
-}
-
-type ContextReducer<Value, SelectedValue> = React.Reducer<
-  readonly [Value, SelectedValue],
-  undefined | readonly [ContextVersion, Value]
->
-
-type ContextSelector<Value, SelectedValue> = (value: Value) => SelectedValue
+import {
+  Context,
+  ContextReducer,
+  ContextSelector,
+  ContextValue,
+  ContextVersion
+} from './types'
 
 const isDev = process.env.NODE_ENV !== 'production'
 
@@ -45,7 +21,24 @@ const useIsomorphicLayoutEffect: typeof React.useEffect = canUseDOM()
   ? React.useLayoutEffect
   : React.useEffect
 
-const createProvider = <Value,>(
+/**
+ * inlined Object.is polyfill to avoid requiring consumers ship their own
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function is(x: any, y: any) {
+  return (
+    (x === y && (x !== 0 || 1 / x === 1 / y)) || (x !== x && y !== y) // eslint-disable-line no-self-compare
+  )
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const objectIs: (x: any, y: any) => boolean =
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore fallback to native if it exists (not in IE11)
+  typeof Object.is === 'function' ? Object.is : is
+
+const createProvider = <Value>(
   Original: React.Provider<ContextValue<Value>>
 ) => {
   const Provider: React.FC<React.ProviderProps<Value>> = (props) => {
@@ -92,9 +85,7 @@ const createProvider = <Value,>(
   return Provider as unknown as React.Provider<ContextValue<Value>>
 }
 
-const createContext = <Props, Value>(
-  defaultValue: Value
-): Context<Props, Value> => {
+export const createContext = <Value>(defaultValue: Value): Context<Value> => {
   const context = React.createContext<ContextValue<Value>>({
     value: { current: defaultValue },
     version: { current: -1 },
@@ -104,34 +95,24 @@ const createContext = <Props, Value>(
   context.Provider = createProvider<Value>(context.Provider)
 
   // We don't support Consumer API
-  delete (context as unknown as Context<Props, Value>).Consumer
+  delete (context as unknown as Context<Value>).Consumer
 
-  return context as unknown as Context<Props, Value>
+  return context as unknown as Context<Value>
 }
 
-/**
- * inlined Object.is polyfill to avoid requiring consumers ship their own
- * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function is(x: any, y: any) {
-  return (
-    (x === y && (x !== 0 || 1 / x === 1 / y)) || (x !== x && y !== y) // eslint-disable-line no-self-compare
-  )
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const objectIs: (x: any, y: any) => boolean =
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore fallback to native if it exists (not in IE11)
-  typeof Object.is === 'function' ? Object.is : is
-
-const useContextSelector = <Props, Value, SelectedValue>(
-  context: Context<Props, Value>,
+export function useContextSelector<Value, SelectedValue>(
+  context: Context<Value>,
   selector: ContextSelector<Value, SelectedValue>
-): SelectedValue => {
+): SelectedValue
+
+export function useContextSelector<Value>(context: Context<Value>): Value
+
+export function useContextSelector<Value, SelectedValue>(
+  context: Context<Value>,
+  selector?: ContextSelector<Value, SelectedValue>
+): Value | SelectedValue {
   const contextValue = React.useContext(
-    context as unknown as Context<Props, ContextValue<Value>>
+    context as unknown as Context<ContextValue<Value>>
   )
 
   const {
@@ -140,20 +121,20 @@ const useContextSelector = <Props, Value, SelectedValue>(
     listeners
   } = contextValue
 
-  const selected = selector(value)
+  const selected = selector?.(value) ?? value
 
   const [state, dispatch] = React.useReducer<
-    ContextReducer<Value, SelectedValue>
+    ContextReducer<Value, Value | SelectedValue>
   >(
     (
       prevState: readonly [
         Value /* contextValue */,
-        SelectedValue /* selector(value) */
+        Value | SelectedValue /* selector(value) */
       ],
       payload:
         | undefined // undefined from render below
         | readonly [ContextVersion, Value] // from provider effect
-    ): readonly [Value, SelectedValue] => {
+    ): readonly [Value, Value | SelectedValue] => {
       if (!payload) {
         // early bail out when is dispatched during render
         return [value, selected] as const
@@ -172,7 +153,7 @@ const useContextSelector = <Props, Value, SelectedValue>(
           return prevState // do not update
         }
 
-        const nextSelected = selector(payload[1])
+        const nextSelected = selector?.(payload[1]) ?? payload[1]
 
         if (objectIs(prevState[1], nextSelected)) {
           return prevState // do not update
@@ -206,22 +187,3 @@ const useContextSelector = <Props, Value, SelectedValue>(
 
   return state[1]
 }
-
-function state<Props, Value>(
-  useValue: (props: Props) => Value
-): ContextTuple<Props, Value> {
-  const context = createContext<Props, Value>({} as Value)
-
-  const Provider: React.FC<Props> = (props) => {
-    const value = useValue(props)
-    return <context.Provider value={value}>{props.children}</context.Provider>
-  }
-
-  const useBindContextSelector = <SelectedValue,>(
-    selector: ContextSelector<Value, SelectedValue>
-  ) => useContextSelector(context, selector)
-
-  return [Provider, useBindContextSelector]
-}
-
-export default state
