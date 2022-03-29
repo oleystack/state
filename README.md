@@ -29,16 +29,16 @@ const [Provider, useBase] = state(useBaseState)
 
 ```tsx
 // Always rerender
-const { alice, bob } = useTest()
+const { alice, bob } = useBase()
 
 // Rerender when alice changed
-const alice = useTest( state => state.alice )
+const alice = useBase( state => state.alice )
 
 // Rerender when alice and bob changed
-const [alice, bob] = useTest( state => [state.alice, state.bob] )
+const [alice, bob] = useBase( state => [state.alice, state.bob] )
 
 // Rerender when alice and bob changed
-const { alice, bob } = useTest( state => ({ alice: state.alice, bob: state.bob }) )
+const { alice, bob } = useBase( state => ({ alice: state.alice, bob: state.bob }) )
 ```
 
 ## License
