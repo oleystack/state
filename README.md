@@ -36,7 +36,7 @@ const [Provider, useBase] = state(() => {
   return { alice, setAlice }
 })
 
-// 3️⃣ Use the Selector
+// 3️⃣ Use the selector hook in component
 const Child = () => {
   const alice = useBase(state => state.alice)
   return <p>{alice}</p>
@@ -78,9 +78,9 @@ const { alice, bob } = useBase(
 type HookProps = { alice: string, bob: string }
 
 const [Provider, useBase] = state(
-  ({ alice: initialAlice, bob }: HookProps) => {
-    const [alice, setAlice] = React.useState(initialAlice)
-    return { alice, setAlice, bob }
+  (props: HookProps) => {
+    const [alice, setAlice] = React.useState(props.alice)
+    return { alice, setAlice, bob: props.bob }
   }
 )
 
