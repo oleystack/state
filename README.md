@@ -1,7 +1,6 @@
 # BitAboutState
 > Tiny and powerful React state management library.<br />
 > 100% Idiomatic React.<br />
-> 100% Typed.
 
 ![bit-about-state](https://user-images.githubusercontent.com/1496580/160495578-c4a54e53-7c5f-4bc3-9db3-a45c6ed45394.png)
 
@@ -15,6 +14,16 @@
 ```bash
 npm install --save @bit-about/state
 ```
+
+## Features
+
+- 100% Idiomatic React
+- 100% Typescript with state types deduction
+- Tiny - only 100KB
+- State on hook
+- No centralized state provider
+- Efficient sub-states selectors
+- Just works ™️
 
 ## Usage
 
@@ -88,6 +97,10 @@ const [Provider, useFruits] = state(() => {
 // 🧠 Rerender ONLY when fruits changed (no matter if isLoading changes)
 const fruits = useBase(state => state.fruits)
 ```
+
+## Credits
+- [Constate](https://github.com/diegohaz/constate) - main approach inspiration
+- [use-context-selector](https://github.com/dai-shi/use-context-selector) & [FluentUI](https://github.com/microsoft/fluentui) - fancy rerender avoiding tricks and main code inspiration
 
 
 ## License
