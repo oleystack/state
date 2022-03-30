@@ -17,12 +17,12 @@ npm install --save @bit-about/state
 
 ## Features
 
-- 100% Idiomatic React
+- 100% **Idiomatic React**
 - 100% Typescript with state types deduction
-- Efficient sub-states selectors
+- Efficient **sub-states selectors**
 - State on hook
 - No centralized state provider
-- Tiny - only 100KB
+- Tiny - only **100KB**
 - **Just works** ™️
 
 ## Usage
