@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { fireEvent, render } from '@testing-library/react'
 import state from '../state'
+import { ContextSelector } from '../types'
 
 // Counter Component
 const Counter = ({ role = 'counter' }: { role: string }) => {
@@ -640,4 +641,42 @@ test('Shallow comparasion', () => {
     bothObjCounter: 3,
     buttonsCounter: 2
   })
+})
+
+test('Shallow comparasion array', () => {
+  const SELLECTOR_X: ContextSelector<{}, number[]> = () => [1, 2, 3]
+  const SELLECTOR_Y: ContextSelector<{}, number[]> = () => [1, 2]
+
+  const [Provider, useBase] = state(() => {
+    return {}
+  })
+
+  const Child = () => {
+    const [sellector, setSellector] = React.useState(() => SELLECTOR_X)
+    useBase(sellector)
+
+    return (
+      <>
+        <button
+          role='change_sellector'
+          onClick={() => setSellector(() => SELLECTOR_Y)}
+        />
+        <Counter role='counter' />
+      </>
+    )
+  }
+
+  const App = () => (
+    <Provider>
+      <Child />
+    </Provider>
+  )
+  const { getByRole } = render(<App />)
+
+  // Basic render
+  expect(getByRole('counter').textContent).toEqual('1')
+
+  // Test shallow copy
+  fireEvent.click(getByRole('change_sellector'))
+  expect(getByRole('counter').textContent).toEqual('2')
 })

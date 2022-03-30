@@ -111,6 +111,7 @@ export function useContextSelector<Value, SelectedValue>(
     )
   }
 
+  console.log(selector)
   const selected = selector?.(value) ?? value
 
   // eslint-disable-next-line no-self-compare
