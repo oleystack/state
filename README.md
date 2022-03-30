@@ -34,13 +34,17 @@ const [Provider, useBase] = state(useBaseState)
 const { alice, bob } = useBase()
 
 // Rerender when alice changed
-const alice = useBase( state => state.alice )
+const alice = useBase(state => state.alice)
 
 // Rerender when alice or bob changed
-const [alice, bob] = useBase( state => [state.alice, state.bob] )
+const [alice, bob] = useBase( 
+  state => [state.alice, state.bob] 
+)
 
 // Rerender when alice or bob changed
-const { alice, bob } = useBase( state => ({ alice: state.alice, bob: state.bob }) )
+const { alice, bob } = useBase( 
+  state => ({ alice: state.alice, bob: state.bob }) 
+)
 ```
 
 ## License
