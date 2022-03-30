@@ -69,6 +69,9 @@ const { alice, bob } = useBase(
 )
 ```
 
+> NOTE:<br />
+> **Values** in objects and arrays created in selectors are shallow compared.
+
 ## State props
 
 ```tsx
