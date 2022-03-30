@@ -105,6 +105,12 @@ export function useContextSelector<Value, SelectedValue>(
     listeners
   } = contextValue
 
+  if (version === -1) {
+    console.warn(
+      'The context hook must be used in component wrapped with its corresponding Provider'
+    )
+  }
+
   const selected = selector?.(value) ?? value
 
   // eslint-disable-next-line no-self-compare

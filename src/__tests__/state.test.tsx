@@ -351,3 +351,22 @@ test('Rerender with all selectors', () => {
     buttonsCounter: 1
   })
 })
+
+test('No provider error', () => {
+  jest.spyOn(console, 'warn').mockImplementation(() => {})
+  const [, useBase] = state(() => {
+    const [value] = React.useState(0)
+    return { value }
+  })
+
+  const Child = () => {
+    const { value } = useBase()
+    return <p role='value'>{value}</p>
+  }
+
+  const App = () => <Child />
+  render(<App />)
+  expect(console.warn).toHaveBeenCalledWith(
+    'The context hook must be used in component wrapped with its corresponding Provider'
+  )
+})
