@@ -51,6 +51,7 @@ const useBaseState = () => {
   return { alice, setAlice, bob, setBob }
 }
 
+// 1️⃣ Create your hook-like state
 const [Provider, useBase] = state(useBaseState)
 ```
 
