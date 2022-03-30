@@ -51,21 +51,6 @@ const App = () => (
 ```
 
 ## State selectors
-
-```jsx
-import { state } from '@bit-about/state'
-
-const useBaseState = () => {
-  const [alice, setAlice] = React.useState(0)
-  const [bob, setBob] = React.useState(0)
-
-  return { alice, setAlice, bob, setBob }
-}
-
-// 1️⃣ Create your hook-like state
-const [Provider, useBase] = state(useBaseState)
-```
-
 Choose your own way to select state:
 
 ```jsx
