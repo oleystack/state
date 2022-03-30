@@ -19,10 +19,10 @@ npm install --save @bit-about/state
 
 - 100% Idiomatic React
 - 100% Typescript with state types deduction
-- Tiny - only 100KB
+- Efficient sub-states selectors
 - State on hook
 - No centralized state provider
-- Efficient sub-states selectors
+- Tiny - only 100KB
 - Just works ™️
 
 ## Usage
