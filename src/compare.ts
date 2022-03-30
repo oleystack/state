@@ -32,6 +32,10 @@ const isEqualArray = <T>(x: T[], y: T[]): boolean => {
 }
 
 const isEqual = (x: any, y: any): boolean => {
+  if (x === y) {
+    return true
+  }
+
   if (Array.isArray(x) && Array.isArray(y)) {
     return isEqualArray(x, y)
   }
