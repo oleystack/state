@@ -25,18 +25,18 @@ const [Provider, useBase] = state(() => {
   return { alice, setAlice }
 })
 
+// 3️⃣ Use the Context
+const Child = () => {
+  const alice = useBase(state => state.alice)
+  return <p>{alice}</p>
+}
+
 // 2️⃣ Wrap the tree with the Provider
 const App = () => (
   <Provider>
     <Child />
   </Provider>
  )
-
-// 3️⃣ Use the Context
-const Child = () => {
-  const alice = useBase(state => state.alice)
-  return <p>{alice}</p>
-}
 ```
 
 // Todo:
