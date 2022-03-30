@@ -74,11 +74,12 @@ const { alice, bob } = useBase(
 ```tsx
 type HookProps = { alice: string, bob: string }
 
-const [Provider, useBase] = state((props: Props) => {
-  const { alice: initialAlice, bob } = props;
-  const [alice, setAlice] = React.useState(initialAlice)
-  return { alice, setAlice, bob }
-})
+const [Provider, useBase] = state(
+  ({ alice: initialAlice, bob }: HookProps) => {
+    const [alice, setAlice] = React.useState(initialAlice)
+    return { alice, setAlice, bob }
+  }
+)
 
 const App = () => (
   <Provider alice="Alice" bob="Bob">
