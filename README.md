@@ -32,14 +32,14 @@ const [Provider, useBase] = state(useBaseState)
 ```tsx
 // Rerender when anything changed
 const { alice, bob } = useBase()
+```
 
-// Rerender when alice changed
+```tsx
+// Conditional rerendering
 const alice = useBase(state => state.alice)
 
-// Rerender when alice or bob changed
 const [alice, bob] = useBase(state => [state.alice, state.bob])
 
-// Rerender when alice or bob changed
 const { alice, bob } = useBase( 
   state => ({ alice: state.alice, bob: state.bob }) 
 )
