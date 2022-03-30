@@ -10,7 +10,7 @@ import {
   ContextValue,
   ContextVersion
 } from './types'
-import { compareFunc as isEqual } from './compare'
+import { compareFunc, compareOneLevelDeepFunc } from './compare'
 
 const isDev = process.env.NODE_ENV !== 'production'
 
@@ -106,6 +106,10 @@ export function useContextSelector<Value, SelectedValue>(
   } = contextValue
 
   const selected = selector?.(value) ?? value
+
+  // eslint-disable-next-line no-self-compare
+  const isCreatedOnFly = selector && selector(value) !== selector(value)
+  const isEqual = isCreatedOnFly ? compareOneLevelDeepFunc : compareFunc
 
   const [state, dispatch] = React.useReducer<
     ContextReducer<Value, Value | SelectedValue>

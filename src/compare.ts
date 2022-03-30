@@ -32,7 +32,7 @@ const isEqualArray = <A, B>(x: A[], y: B[]): boolean => {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const isEqual = (x: any, y: any): boolean => {
+const isEqualOneLevelDeep = (x: any, y: any): boolean => {
   if (x === y) {
     return true
   }
@@ -58,4 +58,5 @@ const isEqual = (x: any, y: any): boolean => {
   return objectIs(x, y)
 }
 
-export const compareFunc = isEqual
+export const compareOneLevelDeepFunc = isEqualOneLevelDeep
+export const compareFunc = objectIs
