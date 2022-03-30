@@ -23,7 +23,7 @@ npm install --save @bit-about/state
 - State on hook
 - No centralized state provider
 - Tiny - only **100KB**
-- **Just works** ™️
+- **Just works** ™
 
 ## Usage
 
@@ -69,7 +69,29 @@ const { alice, bob } = useBase(
 )
 ```
 
-## BitAboutState 💛 [ReactQuery](https://github.com/tannerlinsley/react-query)
+> NOTE:<br />
+> **Values** in objects and arrays created in selectors are shallow compared.
+
+## State props
+
+```tsx
+type HookProps = { alice: string, bob: string }
+
+const [Provider, useBase] = state(
+  ({ alice: initialAlice, bob }: HookProps) => {
+    const [alice, setAlice] = React.useState(initialAlice)
+    return { alice, setAlice, bob }
+  }
+)
+
+const App = () => (
+  <Provider alice="Alice" bob="Bob">
+    <Child />
+  </Provider>
+)
+```
+
+## BitAboutState 💛 [React Query](https://github.com/tannerlinsley/react-query)
 
 ```jsx
 import { useQuery } from 'react-query'
