@@ -39,7 +39,7 @@ const App = () => (
 )
 ```
 
-// Todo:
+## State selectors
 
 ```jsx
 import { state } from '@bit-about/state'
