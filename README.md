@@ -78,6 +78,7 @@ const alice = useBase(state => state.alice)
 // 🤌 Rerender when alice or bob changed
 const [alice, bob] = useBase(state => [state.alice, state.bob])
 
+// or
 const { alice, bob } = useBase( 
   state => ({ alice: state.alice, bob: state.bob }) 
 )
