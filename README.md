@@ -77,13 +77,12 @@ import { state } from '@bit-about/state'
 type HookProps = { alice: string, bob: string }
 
 // 1️⃣ Create your hook-like state with HookProps
-const useBaseState = ({ alice: initialAlice, bob }: HookProps) => {
-  const [alice, setAlice] = React.useState(initialAlice)
-  
-  return { alice, setAlice, bob }
-}
-
-const [Provider, useBase] = state(useBaseState)
+const [Provider, useBase] = state(
+  ({ alice: initialAlice, bob }: HookProps) => {
+    const [alice, setAlice] = React.useState(initialAlice)
+    return { alice, setAlice, bob }
+  }
+)
 
 // 2️⃣ Wrap the tree with the Provider
 const App = () => (
