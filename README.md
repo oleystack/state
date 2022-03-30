@@ -30,7 +30,7 @@ const [Provider, useBase] = state(useBaseState)
 ```
 
 ```tsx
-// Always rerender
+// Rerender when anything changed
 const { alice, bob } = useBase()
 
 // Rerender when alice changed
