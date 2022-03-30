@@ -7,9 +7,9 @@ function state<Props, Value = undefined>(
 ): ContextTuple<Props, Value> {
   const context = createContext<Value>({} as Value)
 
-  const Provider: Provider<Props> = (props) => {
-    const value = useValue(props)
-    return <context.Provider value={value}>{props.children}</context.Provider>
+  const Provider: Provider<Props> = ({ children, ...props }) => {
+    const value = useValue(props as Props)
+    return <context.Provider value={value}>{children}</context.Provider>
   }
 
   const useBindContextSelector = <SelectedValue,>(

@@ -5,8 +5,9 @@ import { state } from '@bit-about/state'
 /**
  * Declaring STATE
  */
-const useCustomState = () => {
-  const [aliceValue, setAliceValue] = useState(0)
+type Props = { alice: number }
+const useCustomState = ({ alice: initialAlice }: Props) => {
+  const [aliceValue, setAliceValue] = useState(initialAlice)
   const [bobValue, setBobValue] = useState(0)
 
   return { aliceValue, setAliceValue, bobValue, setBobValue }
@@ -86,7 +87,7 @@ const Bob = () => {
  */
 const App = () => {
   return (
-    <TestProvider>
+    <TestProvider alice={3}>
       <Alice />
       <Buttons />
       <Bob />

@@ -17,7 +17,7 @@ const objectIs: (x: any, y: any) => boolean =
 const isObject = (value: any): boolean => typeof value === 'object' && !!value
 
 // One level deep
-const isEqualArray = <T>(x: T[], y: T[]): boolean => {
+const isEqualArray = <A, B>(x: A[], y: B[]): boolean => {
   if (x.length !== y.length) {
     return false
   }
@@ -31,6 +31,7 @@ const isEqualArray = <T>(x: T[], y: T[]): boolean => {
   return true
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isEqual = (x: any, y: any): boolean => {
   if (x === y) {
     return true
