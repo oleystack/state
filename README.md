@@ -75,7 +75,8 @@ const { alice, bob } = useBase(
 type HookProps = { alice: string, bob: string }
 
 const [Provider, useBase] = state(
-  ({ alice: initialAlice, bob }: HookProps) => {
+  (props: HookProps) => {
+    const { alice: initialAlice, bob } = props;
     const [alice, setAlice] = React.useState(initialAlice)
     return { alice, setAlice, bob }
   }
