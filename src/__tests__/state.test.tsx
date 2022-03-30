@@ -370,3 +370,274 @@ test('No provider error', () => {
     'The context hook must be used in component wrapped with its corresponding Provider'
   )
 })
+
+test('Multiple selectors type in one component', () => {
+  const [Provider, useBase] = state(() => {
+    const [alice, setAlice] = React.useState(0)
+    const [bob, setBob] = React.useState(0)
+    return { alice, setAlice, bob, setBob }
+  })
+
+  const Buttons = () => {
+    const [setAlice, setBob] = useBase((state) => [
+      state.setAlice,
+      state.setBob
+    ])
+    return (
+      <>
+        <button
+          role='increment_alice'
+          onClick={() => setAlice((state) => state + 1)}
+        />
+        <button
+          role='increment_bob'
+          onClick={() => setBob((state) => state + 1)}
+        />
+        <Counter role='counter_buttons' />
+      </>
+    )
+  }
+
+  const Alice = () => {
+    const alice = useBase((state) => state.alice)
+
+    useBase((state) => state.alice)
+    useBase((state) => [state.alice, state.setAlice])
+    useBase((state) => ({
+      alice: state.alice,
+      bob: state.setAlice
+    }))
+
+    return (
+      <>
+        <Counter role='counter_alice' />
+        <p role='alice'>{alice}</p>
+      </>
+    )
+  }
+
+  const App = () => (
+    <Provider>
+      <Buttons />
+      <Alice />
+    </Provider>
+  )
+  const { getByRole } = render(<App />)
+
+  // Creating test helper
+  type TestResults = {
+    alice: number
+    aliceCounter: number
+    buttonsCounter: number
+  }
+  const expectResults = (expected: TestResults) => {
+    expect(getByRole('alice').textContent).toEqual(expected.alice.toString())
+    expect(getByRole('counter_alice').textContent).toEqual(
+      expected.aliceCounter.toString()
+    )
+
+    expect(getByRole('counter_buttons').textContent).toEqual(
+      expected.buttonsCounter.toString()
+    )
+  }
+
+  // Basic render
+  expectResults({
+    alice: 0,
+    aliceCounter: 1,
+    buttonsCounter: 1
+  })
+
+  // On Alice increment
+  fireEvent.click(getByRole('increment_alice'))
+  expectResults({
+    alice: 1,
+    aliceCounter: 2,
+    buttonsCounter: 1
+  })
+
+  // On Bob increment
+  fireEvent.click(getByRole('increment_bob'))
+  expectResults({
+    alice: 1,
+    aliceCounter: 2,
+    buttonsCounter: 1
+  })
+
+  // On Alice increment again
+  fireEvent.click(getByRole('increment_alice'))
+  expectResults({
+    alice: 2,
+    aliceCounter: 3,
+    buttonsCounter: 1
+  })
+})
+
+test('Shallow comparasion', () => {
+  const OBJ_X = { a: -1 }
+  const OBJ_Y = { a: 1 }
+
+  const [Provider, useBase] = state(() => {
+    const [, forceUpdate] = React.useReducer((x) => x + 1, 0)
+
+    const [alice, setAlice] = React.useState({ abc: OBJ_X })
+    const [bob, setBob] = React.useState({ cba: 123 })
+
+    const provokeRerender = React.useCallback(() => {
+      alice.abc = OBJ_Y
+      forceUpdate()
+    }, [forceUpdate, alice])
+
+    return { alice, bob, provokeRerender, setAlice, setBob }
+  })
+
+  const Buttons = () => {
+    const [provokeRerender, setAlice, setBob] = useBase((state) => [
+      state.provokeRerender,
+      state.setAlice,
+      state.setBob
+    ])
+
+    return (
+      <>
+        <button role='provoke_rerender' onClick={() => provokeRerender()} />
+        <button
+          role='change_alice'
+          onClick={() => setAlice({ abc: { a: Math.random() } })}
+        />
+        <button
+          role='change_bob'
+          onClick={() => setBob({ cba: Math.random() })}
+        />
+        <Counter role='counter_buttons' />
+      </>
+    )
+  }
+
+  const Alice = () => {
+    useBase((state) => state.alice)
+
+    return (
+      <>
+        <Counter role='counter_alice' />
+      </>
+    )
+  }
+
+  const Bob = () => {
+    useBase((state) => state.bob)
+
+    return (
+      <>
+        <Counter role='counter_bob' />
+      </>
+    )
+  }
+
+  const BothArray = () => {
+    useBase((state) => [state.alice, state.bob])
+
+    return (
+      <>
+        <Counter role='counter_both_array' />
+      </>
+    )
+  }
+
+  const BothObj = () => {
+    useBase((state) => ({ alice: state.alice, bob: state.bob }))
+
+    return (
+      <>
+        <Counter role='counter_both_obj' />
+      </>
+    )
+  }
+
+  const App = () => (
+    <Provider>
+      <Buttons />
+      <Alice />
+      <Bob />
+      <BothArray />
+      <BothObj />
+    </Provider>
+  )
+  const { getByRole } = render(<App />)
+
+  // Creating test helper
+  type TestResults = {
+    aliceCounter: number
+    bobCounter: number
+    bothArrayCounter: number
+    bothObjCounter: number
+    buttonsCounter: number
+  }
+  const expectResults = (expected: TestResults) => {
+    expect(getByRole('counter_alice').textContent).toEqual(
+      expected.aliceCounter.toString()
+    )
+
+    expect(getByRole('counter_bob').textContent).toEqual(
+      expected.bobCounter.toString()
+    )
+
+    expect(getByRole('counter_both_array').textContent).toEqual(
+      expected.bothArrayCounter.toString()
+    )
+
+    expect(getByRole('counter_both_obj').textContent).toEqual(
+      expected.bothObjCounter.toString()
+    )
+
+    expect(getByRole('counter_buttons').textContent).toEqual(
+      expected.buttonsCounter.toString()
+    )
+  }
+
+  // Basic render
+  expectResults({
+    aliceCounter: 1,
+    bobCounter: 1,
+    bothArrayCounter: 1,
+    bothObjCounter: 1,
+    buttonsCounter: 1
+  })
+
+  // Test shallow copy
+  fireEvent.click(getByRole('provoke_rerender'))
+  expectResults({
+    aliceCounter: 1,
+    bobCounter: 1,
+    bothArrayCounter: 1,
+    bothObjCounter: 1,
+    buttonsCounter: 1
+  })
+
+  fireEvent.click(getByRole('change_bob'))
+  expectResults({
+    aliceCounter: 1,
+    bobCounter: 2,
+    bothArrayCounter: 2,
+    bothObjCounter: 2,
+    buttonsCounter: 1
+  })
+
+  fireEvent.click(getByRole('change_alice'))
+  expectResults({
+    aliceCounter: 2,
+    bobCounter: 2,
+    bothArrayCounter: 3,
+    bothObjCounter: 3,
+    buttonsCounter: 2 // Because changing alice updated useCallback (provokeRerender)
+  })
+
+  fireEvent.click(getByRole('provoke_rerender'))
+  expectResults({
+    aliceCounter: 2,
+    bobCounter: 2,
+    bothArrayCounter: 3,
+    bothObjCounter: 3,
+    buttonsCounter: 2
+  })
+})
