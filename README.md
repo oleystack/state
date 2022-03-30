@@ -72,11 +72,8 @@ const { alice, bob } = useBase(
 ## State props
 
 ```tsx
-import { state } from '@bit-about/state'
-
 type HookProps = { alice: string, bob: string }
 
-// 1️⃣ Create your hook-like state with HookProps
 const [Provider, useBase] = state(
   ({ alice: initialAlice, bob }: HookProps) => {
     const [alice, setAlice] = React.useState(initialAlice)
@@ -84,7 +81,6 @@ const [Provider, useBase] = state(
   }
 )
 
-// 2️⃣ Wrap the tree with the Provider
 const App = () => (
   <Provider alice="Alice" bob="Bob">
     <Child />
