@@ -91,7 +91,7 @@ const App = () => (
 )
 ```
 
-## BitAboutState 💛 [ReactQuery](https://github.com/tannerlinsley/react-query)
+## BitAboutState 💛 [React Query](https://github.com/tannerlinsley/react-query)
 
 ```jsx
 import { useQuery } from 'react-query'
