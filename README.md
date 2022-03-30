@@ -36,7 +36,7 @@ const App = () => (
   <Provider>
     <Child />
   </Provider>
- )
+)
 ```
 
 // Todo:
