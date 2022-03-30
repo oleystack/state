@@ -1,12 +1,13 @@
-# BitAboutState
-> Tiny and powerful state management library.
-
-![bit-about-state](https://user-images.githubusercontent.com/1496580/160495578-c4a54e53-7c5f-4bc3-9db3-a45c6ed45394.png)
-
-
-[![NPM](https://img.shields.io/npm/v/@bit-about/state.svg)](https://www.npmjs.com/package/@bit-about/state) 
-![npm bundle size](https://img.shields.io/bundlephobia/min/@bit-about/state?label=size)
-![Codecov](https://img.shields.io/codecov/c/github/bit-about/state)
+# <p align="center">BitAboutState</p>
+<p align="center">
+<img alt="" src="https://user-images.githubusercontent.com/1496580/160495578-c4a54e53-7c5f-4bc3-9db3-a45c6ed45394.png" /><br/>
+<a href="https://www.npmjs.com/package/@bit-about/state"><img alt="" src="https://img.shields.io/npm/v/@bit-about/state.svg" /></a>
+<img alt="" src="https://img.shields.io/bundlephobia/min/@bit-about/state?label=size" />
+<img alt="" src="https://img.shields.io/codecov/c/github/bit-about/state" />
+<br />
+Tiny and powerful React state management library.<br />
+100% Idiomatic React.<br />
+</p>
 
 ## Install
 
@@ -14,35 +15,82 @@
 npm install --save @bit-about/state
 ```
 
+## Features
+
+- 100% **Idiomatic React**
+- 100% Typescript with state types deduction
+- Efficient **sub-states selectors**
+- State on hook
+- No centralized state provider
+- Tiny - only **100KB**
+- **Just works** ™️
+
 ## Usage
 
-```tsx
+```jsx
 import { state } from '@bit-about/state'
 
-const useBaseState = () => {
-  const [alice, setAlice] = useState(0)
-  const [bob, setBob] = useState(0)
+// 1️⃣ Create your hook-like state
+const [Provider, useBase] = state(() => {
+  const [alice, setAlice] = React.useState("Alice")
+  return { alice, setAlice }
+})
 
-  return { alice, setAlice, bob, setBob }
+// 3️⃣ Use the Selector
+const Child = () => {
+  const alice = useBase(state => state.alice)
+  return <p>{alice}</p>
 }
 
-const [Provider, useBase] = state(useBaseState)
+// 2️⃣ Wrap the tree with the Provider
+const App = () => (
+  <Provider>
+    <Child />
+  </Provider>
+)
 ```
 
-```tsx
-// Always rerender
+## State selectors
+Choose your own way to select state:
+
+```jsx
+// 👍 Rerender when anything changed
 const { alice, bob } = useBase()
 
-// Rerender when alice changed
-const alice = useBase( state => state.alice )
+// 💪 Rerender when alice changed
+const alice = useBase(state => state.alice)
 
-// Rerender when alice and bob changed
-const [alice, bob] = useBase( state => [state.alice, state.bob] )
+// 🤌 Rerender when alice or bob changed
+const [alice, bob] = useBase(state => [state.alice, state.bob])
 
-// Rerender when alice and bob changed
-const { alice, bob } = useBase( state => ({ alice: state.alice, bob: state.bob }) )
+// or
+const { alice, bob } = useBase( 
+  state => ({ alice: state.alice, bob: state.bob }) 
+)
 ```
 
-## License
+## BitAboutState 💛 [ReactQuery](https://github.com/tannerlinsley/react-query)
 
-MIT © [Maciej Olejnik](https://github.com/Gareneye)
+```jsx
+import { useQuery } from 'react-query'
+import { fetchFruits } from './fruits.ts'
+
+const [Provider, useFruits] = state(() => {
+  const { data: fruits } = useQuery('fruits', fetchFruits)
+  return { fruits }
+})
+
+// 🧠 Rerender ONLY when fruits changed (no matter if isLoading changes)
+const fruits = useBase(state => state.fruits)
+```
+
+## Credits
+- [Constate](https://github.com/diegohaz/constate) - approach main inspiration
+- [use-context-selector](https://github.com/dai-shi/use-context-selector) & [FluentUI](https://github.com/microsoft/fluentui) - fancy rerender avoiding tricks and code main inspiration
+
+
+## License
+MIT © [Maciej Olejnik 🇵🇱](https://github.com/Gareneye)
+
+---
+<p align="center">🇺🇦 Slava Ukraini</p>
