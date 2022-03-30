@@ -19,13 +19,13 @@ npm install --save @bit-about/state
 ```tsx
 import { state } from '@bit-about/state'
 
-// 1️⃣ Create your Context
+// 1️⃣ Create your hook-like state
 const [Provider, useBase] = state(() => {
   const [alice, setAlice] = React.useState("Alice")
   return { alice, setAlice }
 })
 
-// 3️⃣ Use the Context
+// 3️⃣ Use the Selector
 const Child = () => {
   const alice = useBase(state => state.alice)
   return <p>{alice}</p>
