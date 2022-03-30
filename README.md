@@ -1,5 +1,5 @@
 # BitAboutState
-> Tiny and powerful state management library.
+> Tiny and powerful React state management library.
 
 ![bit-about-state](https://user-images.githubusercontent.com/1496580/160495578-c4a54e53-7c5f-4bc3-9db3-a45c6ed45394.png)
 
