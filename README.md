@@ -20,8 +20,8 @@ npm install --save @bit-about/state
 import { state } from '@bit-about/state'
 
 const useBaseState = () => {
-  const [alice, setAlice] = useState(0)
-  const [bob, setBob] = useState(0)
+  const [alice, setAlice] = React.useState(0)
+  const [bob, setBob] = React.useState(0)
 
   return { alice, setAlice, bob, setBob }
 }
