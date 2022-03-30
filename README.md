@@ -19,6 +19,31 @@ npm install --save @bit-about/state
 ```tsx
 import { state } from '@bit-about/state'
 
+// 1️⃣ Create your Context
+const [Provider, useBase] = state(() => {
+  const [alice, setAlice] = React.useState("Alice")
+  return { alice, setAlice }
+})
+
+// 2️⃣ Wrap the tree with the Provider
+const App = () => (
+  <Provider>
+    <Child />
+  </Provider>
+ )
+
+// 3️⃣ Use the Context
+const Child = () => {
+  const alice = useBase(state => state.alice)
+  return <p>{alice}</p>
+}
+```
+
+// Todo:
+
+```tsx
+import { state } from '@bit-about/state'
+
 const useBaseState = () => {
   const [alice, setAlice] = React.useState(0)
   const [bob, setBob] = React.useState(0)
