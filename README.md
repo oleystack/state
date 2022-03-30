@@ -16,7 +16,7 @@ npm install --save @bit-about/state
 
 ## Usage
 
-```tsx
+```jsx
 import { state } from '@bit-about/state'
 
 // 1️⃣ Create your hook-like state
@@ -41,7 +41,7 @@ const App = () => (
 
 // Todo:
 
-```tsx
+```jsx
 import { state } from '@bit-about/state'
 
 const useBaseState = () => {
@@ -54,7 +54,7 @@ const useBaseState = () => {
 const [Provider, useBase] = state(useBaseState)
 ```
 
-```tsx
+```jsx
 // Rerender when anything changed
 const { alice, bob } = useBase()
 
