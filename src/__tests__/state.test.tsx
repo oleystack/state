@@ -175,3 +175,179 @@ test('Rerender with selectors', () => {
     buttonsCounter: 1
   })
 })
+
+test('Rerender with all selectors', () => {
+  const [Provider, useBase] = state(() => {
+    const [alice, setAlice] = React.useState(0)
+    const [bob, setBob] = React.useState(0)
+    return { alice, setAlice, bob, setBob }
+  })
+
+  const Buttons = () => {
+    const [setAlice, setBob] = useBase((state) => [
+      state.setAlice,
+      state.setBob
+    ])
+    return (
+      <>
+        <button
+          role='increment_alice'
+          onClick={() => setAlice((state) => state + 1)}
+        />
+        <button
+          role='increment_bob'
+          onClick={() => setBob((state) => state + 1)}
+        />
+        <Counter role='counter_buttons' />
+      </>
+    )
+  }
+
+  const AllSelector = () => {
+    const { alice } = useBase()
+    return (
+      <>
+        <Counter role='counter_all_selector' />
+        <p role='alice_all_selector'>{alice}</p>
+      </>
+    )
+  }
+
+  const KeySelector = () => {
+    const alice = useBase((state) => state.alice)
+    return (
+      <>
+        <Counter role='counter_key_selector' />
+        <p role='alice_key_selector'>{alice}</p>
+      </>
+    )
+  }
+
+  const ArraySelector = () => {
+    const [alice] = useBase((state) => [state.alice])
+    return (
+      <>
+        <Counter role='counter_array_selector' />
+        <p role='alice_array_selector'>{alice}</p>
+      </>
+    )
+  }
+
+  const ObjSelector = () => {
+    const { alice } = useBase((state) => ({ alice: state.alice }))
+    return (
+      <>
+        <Counter role='counter_obj_selector' />
+        <p role='alice_obj_selector'>{alice}</p>
+      </>
+    )
+  }
+
+  const App = () => (
+    <Provider>
+      <Buttons />
+      <AllSelector />
+      <KeySelector />
+      <ArraySelector />
+      <ObjSelector />
+    </Provider>
+  )
+  const { getByRole } = render(<App />)
+
+  // Creating test helper
+  type TestResults = {
+    allSelectorAlice: number
+    allSelectorCounter: number
+    keySelectorAlice: number
+    keySelectorCounter: number
+    arraySelectorAlice: number
+    arraySelectorCounter: number
+    objSelectorAlice: number
+    objSelectorCounter: number
+    buttonsCounter: number
+  }
+  const expectResults = (expected: TestResults) => {
+    expect(getByRole('counter_all_selector').textContent).toEqual(
+      expected.allSelectorCounter.toString()
+    )
+    expect(getByRole('alice_all_selector').textContent).toEqual(
+      expected.allSelectorAlice.toString()
+    )
+    expect(getByRole('counter_key_selector').textContent).toEqual(
+      expected.keySelectorCounter.toString()
+    )
+    expect(getByRole('alice_key_selector').textContent).toEqual(
+      expected.keySelectorAlice.toString()
+    )
+    expect(getByRole('counter_array_selector').textContent).toEqual(
+      expected.arraySelectorCounter.toString()
+    )
+    expect(getByRole('alice_array_selector').textContent).toEqual(
+      expected.arraySelectorAlice.toString()
+    )
+    expect(getByRole('counter_obj_selector').textContent).toEqual(
+      expected.objSelectorCounter.toString()
+    )
+    expect(getByRole('alice_key_selector').textContent).toEqual(
+      expected.objSelectorAlice.toString()
+    )
+    expect(getByRole('counter_buttons').textContent).toEqual(
+      expected.buttonsCounter.toString()
+    )
+  }
+
+  // Basic render
+  expectResults({
+    allSelectorAlice: 0,
+    allSelectorCounter: 1,
+    keySelectorAlice: 0,
+    keySelectorCounter: 1,
+    arraySelectorAlice: 0,
+    arraySelectorCounter: 1,
+    objSelectorAlice: 0,
+    objSelectorCounter: 1,
+    buttonsCounter: 1
+  })
+
+  // On Alice increment
+  fireEvent.click(getByRole('increment_alice'))
+  expectResults({
+    allSelectorAlice: 1,
+    allSelectorCounter: 2,
+    keySelectorAlice: 1,
+    keySelectorCounter: 2,
+    arraySelectorAlice: 1,
+    arraySelectorCounter: 2,
+    objSelectorAlice: 1,
+    objSelectorCounter: 2,
+    buttonsCounter: 1
+  })
+
+  // On Bob increment
+  fireEvent.click(getByRole('increment_bob'))
+  expectResults({
+    allSelectorAlice: 1,
+    allSelectorCounter: 3,
+    keySelectorAlice: 1,
+    keySelectorCounter: 2,
+    arraySelectorAlice: 1,
+    arraySelectorCounter: 2,
+    objSelectorAlice: 1,
+    objSelectorCounter: 2,
+    buttonsCounter: 1
+  })
+
+  // On Alice increment again
+  fireEvent.click(getByRole('increment_alice'))
+  expectResults({
+    allSelectorAlice: 2,
+    allSelectorCounter: 4,
+    keySelectorAlice: 2,
+    keySelectorCounter: 3,
+    arraySelectorAlice: 2,
+    arraySelectorCounter: 3,
+    objSelectorAlice: 2,
+    objSelectorCounter: 3,
+    buttonsCounter: 1
+  })
+})
