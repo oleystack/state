@@ -26,9 +26,6 @@
     "react-scripts": "file:../node_modules/react-scripts",
     "typescript": "^4.6.3"
   },
-  "eslintConfig": {
-    "extends": "react-app"
-  },
   "browserslist": {
     "production": [
       ">0.2%",
