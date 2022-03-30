@@ -54,17 +54,18 @@ const useBaseState = () => {
 const [Provider, useBase] = state(useBaseState)
 ```
 
+Choose your own way to select state:
+
 ```jsx
-// Rerender when anything changed
+// 👍 Rerender when anything changed
 const { alice, bob } = useBase()
 
-// Rerender when alice changed
+// 💪 Rerender when alice changed
 const alice = useBase(state => state.alice)
 
-// Rerender when alice or bob changed
+// 🤌 Rerender when alice or bob changed
 const [alice, bob] = useBase(state => [state.alice, state.bob])
 
-// Rerender when alice or bob changed
 const { alice, bob } = useBase( 
   state => ({ alice: state.alice, bob: state.bob }) 
 )
