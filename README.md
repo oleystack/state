@@ -99,8 +99,8 @@ const fruits = useBase(state => state.fruits)
 ```
 
 ## Credits
-- [Constate](https://github.com/diegohaz/constate) - main approach inspiration
-- [use-context-selector](https://github.com/dai-shi/use-context-selector) & [FluentUI](https://github.com/microsoft/fluentui) - fancy rerender avoiding tricks and main code inspiration
+- [Constate](https://github.com/diegohaz/constate) - approach main inspiration
+- [use-context-selector](https://github.com/dai-shi/use-context-selector) & [FluentUI](https://github.com/microsoft/fluentui) - fancy rerender avoiding tricks and code main inspiration
 
 
 ## License
