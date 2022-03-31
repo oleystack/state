@@ -150,7 +150,7 @@ const fruits = useBase(state => state.fruits)
 MIT © [Maciej Olejnik 🇵🇱](https://github.com/Gareneye)
 
 ## Support me
-If you use my library and like it...<br />
+If you use my library and you like it...<br />
 it would be nice if you put the name `BitAboutState` in the work experience section of your resume.<br />
 Thanks 🙇🏻! 
 
