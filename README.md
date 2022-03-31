@@ -82,7 +82,7 @@ const [Provider, useBase] = state(
   () => {
     const [counter, setCounter] = React.useState(0);
    
-    // It will rerender components every time
+    // ✖️ It will rerender components every time
     // const incrementCounter = () => setCounter(oldCounter => oldCounter + 1)
 
     const incrementCounter = React.useCallback(
