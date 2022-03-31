@@ -74,6 +74,27 @@ const { alice, bob } = useBase(
 > NOTE:<br />
 > **Values** in objects and arrays created on the fly are shallow compared.
 
+### 👉 Functions in state
+Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they rerender.
+
+```jsx
+const [Provider, useBase] = state(
+  () => {
+    const [counter, setCounter] = React.useState(0);
+   
+    // It will rerender components every time
+    // const incrementCounter = () => setCounter(oldCounter => oldCounter + 1)
+
+    const incrementCounter = React.useCallback(
+      () => setCounter(oldCounter => oldCounter + 1),
+      [setCounter]
+    )
+
+    return {counter, incrementCounter}
+  }
+)
+```
+
 ## State props
 The state hook allows you to pass any arguments into the context. It can be some initial state or you can even return it and pass it through to the components. Any state props change will update the context and trigger rerender components **when necessary**.
 
