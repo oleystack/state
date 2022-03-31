@@ -99,10 +99,12 @@ const App = () => (
 import { useQuery } from 'react-query'
 import { fetchFruits } from './fruits.ts'
 
-const [Provider, useFruits] = state(() => {
-  const { data: fruits } = useQuery('fruits', fetchFruits)
-  return { fruits }
-})
+const [Provider, useFruits] = state(
+  () => {
+    const { data: fruits } = useQuery('fruits', fetchFruits)
+    return { fruits }
+  }
+)
 
 // 🧠 Rerender ONLY when fruits changed (no matter if isLoading changes)
 const fruits = useBase(state => state.fruits)
