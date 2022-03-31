@@ -53,7 +53,7 @@ const App = () => (
 ```
 
 ## State selectors
-Choose your own way to select state:
+Choose your own way to select state and rerender component **only when necessary**.
 
 ```jsx
 // 👍 Rerender when anything changed
