@@ -110,10 +110,9 @@ const [Provider, useFruits] = state(
 const fruits = useBase(state => state.fruits)
 ```
 
-## Partners
-<p align="center">
-  <a href="https://www.wayfdigital.com/"><img alt="wayfdigital.com" width="100" height="100" src="https://user-images.githubusercontent.com/1496580/161037415-0503f763-a60b-4d40-af9f-95d1304fa486.png"/></a>
-</p>
+## Partners  
+<a href="https://www.wayfdigital.com/"><img alt="wayfdigital.com" width="100" height="100" src="https://user-images.githubusercontent.com/1496580/161037415-0503f763-a60b-4d40-af9f-95d1304fa486.png"/></a>
+
 
 ## Credits
 - [Constate](https://github.com/diegohaz/constate) - approach main inspiration
