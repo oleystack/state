@@ -93,7 +93,7 @@ const [Provider, useBase] = state(
     // const incrementCounter = () => setCounter(oldCounter => oldCounter + 1)
 
     const incrementCounter = React.useCallback(
-      () => setCounter(oldCounter => oldCounter + 1),
+      () => setCounter(value => value + 1),
       [setCounter]
     )
 
