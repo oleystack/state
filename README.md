@@ -31,10 +31,12 @@ npm install --save @bit-about/state
 import { state } from '@bit-about/state'
 
 // 1️⃣ Create your hook-like state
-const [Provider, useBase] = state(() => {
-  const [alice, setAlice] = React.useState("Alice")
-  return { alice, setAlice }
-})
+const [Provider, useBase] = state(
+  () => {
+    const [alice, setAlice] = React.useState("Alice")
+    return { alice, setAlice }
+  }
+)
 
 // 3️⃣ Use the selector hook in component
 const Child = () => {
