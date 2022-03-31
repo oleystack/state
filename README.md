@@ -41,7 +41,7 @@ const [Provider, useBase] = state(
 // 3️⃣ Use the selector hook in component
 const Child = () => {
   const alice = useBase(state => state.alice)
-  return <>{alice}</>
+  return <p>{alice}</p>
 }
 
 // 2️⃣ Wrap the tree with the Provider
