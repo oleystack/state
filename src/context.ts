@@ -152,10 +152,10 @@ export function useContextSelector<Value, SelectedValue>(
         if (isEqual(prevState[1], nextSelected)) {
           return prevState // do not update
         }
-
         return [payload[1], nextSelected] as const
       } catch (e) {
         // ignored (stale props or some other reason)
+        console.warn('Library discovered stale props issue')
       }
 
       // explicitly spread to enforce typing

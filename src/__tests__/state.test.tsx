@@ -651,7 +651,11 @@ test('Shallow comparasion selector switching', () => {
     () => ({ b: 1 }),
     () => ({ b: 2 }),
     () => 5,
-    () => 10.4
+    () => 10.4,
+    () => [1, 2, 3],
+    () => undefined,
+    () => null,
+    () => 3
   ]
 
   const [Provider, useBase] = state(() => {
@@ -668,7 +672,6 @@ test('Shallow comparasion selector switching', () => {
           role='increase_index'
           onClick={() => setIndex((index) => index + 1)}
         />
-        <button role='reset_index' onClick={() => setIndex(0)} />
         <Counter role='counter' />
         <p role='index'>{index}</p>
       </>
@@ -686,12 +689,9 @@ test('Shallow comparasion selector switching', () => {
   expect(getByRole('counter').textContent).toEqual('1')
 
   // Test shallow copy
-  for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < SELLECTOR.length; i++) {
     fireEvent.click(getByRole('increase_index'))
     expect(Number(getByRole('index').textContent)).toEqual(i + 1) // For better test maintenance
     expect(getByRole('counter').textContent).toEqual((i + 2).toString())
   }
-
-  fireEvent.click(getByRole('reset_index'))
-  expect(getByRole('counter').textContent).toEqual('8')
 })
