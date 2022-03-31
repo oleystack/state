@@ -52,7 +52,7 @@ const App = () => (
 )
 ```
 
-> **Don't think too much** - enjoy your clear and efficient state<br />
+> **Don't think too much** - enjoy your functional and efficient state<br />
 > - create context with `state(useMyStateHook)`<br />
 > - remember about wrapping functions in `React.useCallback` in your hook-like state<br />
 > - wrap the components tree with the generated `Provider`<br />
