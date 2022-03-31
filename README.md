@@ -28,6 +28,7 @@ npm install --save @bit-about/state
 ## Usage
 
 ```jsx
+import * as React from 'react'
 import { state } from '@bit-about/state'
 
 // 1️⃣ Create your hook-like state
