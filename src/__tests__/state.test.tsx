@@ -643,25 +643,34 @@ test('Shallow comparasion', () => {
   })
 })
 
-test('Shallow comparasion array', () => {
-  const SELLECTOR_X: ContextSelector<{}, number[]> = () => [1, 2, 3]
-  const SELLECTOR_Y: ContextSelector<{}, number[]> = () => [1, 2]
+test('Shallow comparasion selector switching', () => {
+  const SELLECTOR: ContextSelector<{}, any>[] = [
+    () => [1, 2, 3],
+    () => [1, 2],
+    () => ({ a: 1 }),
+    () => ({ b: 1 }),
+    () => ({ b: 2 }),
+    () => 5,
+    () => 10.4
+  ]
 
   const [Provider, useBase] = state(() => {
     return {}
   })
 
   const Child = () => {
-    const [sellector, setSellector] = React.useState(() => SELLECTOR_X)
-    useBase(sellector)
+    const [index, setIndex] = React.useState(0)
+    useBase(SELLECTOR[index])
 
     return (
       <>
         <button
-          role='change_sellector'
-          onClick={() => setSellector(() => SELLECTOR_Y)}
+          role='increase_index'
+          onClick={() => setIndex((index) => index + 1)}
         />
+        <button role='reset_index' onClick={() => setIndex(0)} />
         <Counter role='counter' />
+        <p role='index'>{index}</p>
       </>
     )
   }
@@ -677,6 +686,12 @@ test('Shallow comparasion array', () => {
   expect(getByRole('counter').textContent).toEqual('1')
 
   // Test shallow copy
-  fireEvent.click(getByRole('change_sellector'))
-  expect(getByRole('counter').textContent).toEqual('2')
+  for (let i = 0; i < 6; i++) {
+    fireEvent.click(getByRole('increase_index'))
+    expect(Number(getByRole('index').textContent)).toEqual(i + 1) // For better test maintenance
+    expect(getByRole('counter').textContent).toEqual((i + 2).toString())
+  }
+
+  fireEvent.click(getByRole('reset_index'))
+  expect(getByRole('counter').textContent).toEqual('8')
 })
