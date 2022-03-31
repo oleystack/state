@@ -5,7 +5,7 @@
 <img alt="Bundle size" src="https://img.shields.io/bundlephobia/min/@bit-about/state?label=size" />
 <a href="https://codecov.io/gh/bit-about/state"><img alt="" src="https://codecov.io/gh/bit-about/state/branch/main/graph/badge.svg?token=BuGi92VqnL" /></a>
 <br />
-Tiny and powerful React state management library.<br />
+🚀 Tiny and powerful React state management library.<br />
 100% Idiomatic React.<br />
 </p>
 
