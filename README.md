@@ -75,6 +75,7 @@ const { alice, bob } = useBase(
 > **Values** in objects and arrays created on the fly are shallow compared.
 
 ## State props
+The state hook allows you to pass any arguments into the context. It can be some initial state or you can even return it and pass it through to the components. Any state props change will update the context and trigger rerender components **when necessary**.
 
 ```tsx
 type HookProps = { alice: string, bob: string }
