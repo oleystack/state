@@ -53,7 +53,7 @@ const App = () => (
 )
 ```
 
-> **Don't think too much** - it's easy<br />
+> **You don't need to think too much** - it's easy, look:<br />
 > - create context with `state(useMyStateHook)`<br />
 > - remember about wrapping functions in `React.useCallback` in your hook-like state<br />
 > - wrap the components tree with the generated `Provider`<br />
