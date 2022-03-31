@@ -81,7 +81,7 @@ const { alice, bob } = useBase(
 > **Values** in objects and arrays created on the fly are shallow compared.
 
 ### 👉 Functions in state
-Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they rerender.
+Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they rerender themselves.
 
 ```jsx
 const [Provider, useBase] = state(
