@@ -52,6 +52,12 @@ const App = () => (
 )
 ```
 
+> **Don't think too much** - enjoy your clear and efficient state<br />
+> - create context with `state(useMyState)`<br />
+> - remember about wrapping functions in `React.useCallback` in your hook-like state<br />
+> - wrap the components tree with provided `Provider`<br />
+> - get your state on components via provided **selector hook**
+
 ## State selectors
 Choose your own way to select state and rerender component **only when necessary**.
 
