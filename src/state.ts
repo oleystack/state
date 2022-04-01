@@ -9,10 +9,10 @@ function state<Props, Value = undefined>(
 
   const BindProvider: Provider<Props> = ({ children, ...props }) => {
     const value = useValue(props as Props)
-    return <context.Provider value={value}>{children}</context.Provider>
+    return React.createElement(context.Provider, { value }, children)
   }
 
-  const useBindContextSelector = <SelectedValue,>(
+  const useBindContextSelector = <SelectedValue>(
     selector?: ContextSelector<Value, SelectedValue>
   ) => useContextSelector(context, selector)
 
