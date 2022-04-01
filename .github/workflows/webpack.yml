@@ -29,11 +29,6 @@ jobs:
     - name: Test
       run: |
         npm run test
-
-    - name: Build
-      run: |
-        npm run predeploy
-        npm run deploy
         
     - name: Codecov
       uses: codecov/codecov-action@v2.1.0
