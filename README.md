@@ -139,6 +139,28 @@ const [Provider, useFruits] = state(
 const fruits = useBase(state => state.fruits)
 ```
 
+## BitAboutState 💛 [BitAboutEvent](https://github.com/bit-about/event)
+Are you tired of sending logic to the related components?<br />
+Move you bussiness logic to the hook-based state using `@bit-about/state` + `@bit-about/event`.<br />
+Now you've got **completely type-safe side-effects**, isn't cool?
+
+```tsx
+import { state } from '@bit-about/state'
+import { useEvent } from './user-events'
+
+const [AuthProvider, useAuth] = state(
+  () => {
+    const [user, setUser] = React.useState<User>(null)
+    
+    useEvent({
+      userLogged: (user: User) => setUser(user)
+    })
+    
+    return { user }
+  }
+)
+```
+
 ## Partners  
 <a href="https://www.wayfdigital.com/"><img alt="wayfdigital.com" width="100" height="100" src="https://user-images.githubusercontent.com/1496580/161037415-0503f763-a60b-4d40-af9f-95d1304fa486.png"/></a>
 
