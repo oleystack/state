@@ -128,7 +128,7 @@ const App = () => (
 import { useQuery } from 'react-query'
 import { fetchFruits } from './fruits.ts'
 
-const [Provider, useFruits] = state(
+const [Provider, useBase] = state(
   () => {
     const { data: fruits } = useQuery('fruits', fetchFruits)
     return { fruits }
