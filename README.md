@@ -148,6 +148,7 @@ Now you've got **completely type-safe side-effects**, isn't cool?
 ```tsx
 import { state } from '@bit-about/state'
 import { useEvent } from './user-events'
+import User from '../models/user'
 
 const [AuthProvider, useAuth] = state(
   () => {
