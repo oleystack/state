@@ -151,7 +151,7 @@ import { useEvent } from './user-events'
 
 const [AuthProvider, useAuth] = state(
   () => {
-    const [user, setUser] = React.useState<User>(null)
+    const [user, setUser] = React.useState<User | null>(null)
     
     useEvent({
       userLogged: (user: User) => setUser(user),
