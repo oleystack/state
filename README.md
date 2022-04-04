@@ -31,7 +31,7 @@ npm install --save @bit-about/state
 import * as React from 'react'
 import { state } from '@bit-about/state'
 
-// 1️⃣ Create your hook-like state
+// 1️⃣ Create your hook-like store
 const [Provider, useStore] = state(
   () => {
     const [alice, setAlice] = React.useState("Alice")
