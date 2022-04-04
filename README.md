@@ -126,17 +126,25 @@ const App = () => (
 
 ```jsx
 import { useQuery } from 'react-query'
-import { fetchFruits } from './fruits.ts'
+import { fetchUser } from './user.ts'
 
-const [Provider, useStore] = state(
-  () => {
-    const { data: fruits } = useQuery('fruits', fetchFruits)
-    return { fruits }
+type UserProfileHookProps = { id: number }
+
+const [Provider, useUser] = state(
+  ({ id }: UserProfileHookProps) => {
+    const { data: user } = useQuery(['user', id], () => fetchUser(id))
+    return { user }
   }
 )
 
-// 🧠 Rerender ONLY when fruits changed (no matter if isLoading changes)
-const fruits = useBase(state => state.fruits)
+const UserProfile = ({ id }) => (
+  <Provider id={id}>
+    <Child />
+  </Provider>
+)
+
+// 🧠 Rerender ONLY when user changed (no matter if isLoading changes)
+const avatar = useUser(state => state.user.avatar)
 ```
 
 ## BitAboutState 💛 [BitAboutEvent](https://github.com/bit-about/event)
