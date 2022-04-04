@@ -32,7 +32,7 @@ import * as React from 'react'
 import { state } from '@bit-about/state'
 
 // 1️⃣ Create your hook-like state
-const [Provider, useBase] = state(
+const [Provider, useStore] = state(
   () => {
     const [alice, setAlice] = React.useState("Alice")
     return { alice, setAlice }
@@ -41,7 +41,7 @@ const [Provider, useBase] = state(
 
 // 3️⃣ Use the selector hook in component
 const Child = () => {
-  const alice = useBase(state => state.alice)
+  const alice = useStore(state => state.alice)
   return <p>{alice}</p>
 }
 
@@ -64,16 +64,16 @@ Choose your own way to select state and rerender component **only when necessary
 
 ```jsx
 // 👍 Rerender when anything changed
-const { alice, bob } = useBase()
+const { alice, bob } = useStore()
 
 // 💪 Rerender when alice changed
-const alice = useBase(state => state.alice)
+const alice = useStore(state => state.alice)
 
 // 🤌 Rerender when alice or bob changed
-const [alice, bob] = useBase(state => [state.alice, state.bob])
+const [alice, bob] = useStore(state => [state.alice, state.bob])
 
 // or
-const { alice, bob } = useBase( 
+const { alice, bob } = useStore( 
   state => ({ alice: state.alice, bob: state.bob }) 
 )
 ```
@@ -85,7 +85,7 @@ const { alice, bob } = useBase(
 Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they rerender themselves.
 
 ```jsx
-const [Provider, useBase] = state(
+const [Provider, useStore] = state(
   () => {
     const [counter, setCounter] = React.useState(0);
    
@@ -108,7 +108,7 @@ The state hook allows you to pass any arguments into the context. It can be some
 ```tsx
 type HookProps = { alice: string, bob: string }
 
-const [Provider, useBase] = state(
+const [Provider, useStore] = state(
   (props: HookProps) => {
     const [alice, setAlice] = React.useState(props.alice)
     return { alice, setAlice, bob: props.bob }
@@ -128,7 +128,7 @@ const App = () => (
 import { useQuery } from 'react-query'
 import { fetchFruits } from './fruits.ts'
 
-const [Provider, useBase] = state(
+const [Provider, useStore] = state(
   () => {
     const { data: fruits } = useQuery('fruits', fetchFruits)
     return { fruits }
