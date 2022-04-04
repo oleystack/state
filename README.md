@@ -117,14 +117,14 @@ const [Provider, useStore] = state(
 
 const App = () => (
   <Provider alice="Alice" bob="Bob">
-    <Child />
+    ...
   </Provider>
 )
 ```
 
 ## BitAboutState 💛 [React Query](https://github.com/tannerlinsley/react-query)
 
-```jsx
+```tsx
 import { useQuery } from 'react-query'
 import { fetchUser } from './user.ts'
 
@@ -139,7 +139,7 @@ const [Provider, useUser] = state(
 
 const UserProfile = ({ id }) => (
   <Provider id={id}>
-    <Child />
+    ...
   </Provider>
 )
 
