@@ -1,19 +1,29 @@
 import * as React from 'react'
 import { GET_SELLECTOR_NULL } from './common'
+import { compareFunc, compareOneLevelDeepFunc } from './compare'
 import { createContext, useContextSelector } from './context'
-import { ContextSelector, ContextTuple, Provider } from './types'
+import {
+  ContextListener,
+  ContextSelector,
+  ContextTuple,
+  Provider
+} from './types'
 
 function state<Props = {}, Value = undefined>(
   useValue: (props: Props) => Value
 ): ContextTuple<Props, Value> {
-  // const listeners = {
-  //   current: []
-  // }
+  const contextListeners: ContextListener<Value>[] = []
   const cache: { state?: Readonly<Value>; isMount: boolean } = {
     state: undefined,
     isMount: false
   }
-  const context = createContext<Value>({} as Value)
+  const context = createContext<Value>(contextListeners, {} as Value)
+
+  const checkIfMount = () => {
+    if (!cache.isMount) {
+      throw new Error("'State is tried to pull, but without Provider wrapped'")
+    }
+  }
 
   /**
    * State Provider
@@ -47,13 +57,56 @@ function state<Props = {}, Value = undefined>(
       SelectedValue
     >()
   ) => {
-    if (!cache.isMount) {
-      throw new Error("'State is tried to pull, but without Provider wrapped'")
-    }
+    checkIfMount()
+
     return selector(cache.state!)
   }
 
-  return [BindProvider, useBindContextSelector, { getState }]
+  /**
+   * Subscriber for non-hook aproaches
+   * @param eventListeners List of subscribed events
+   * @returns Subscriber with unsubscribe method
+   */
+  const subscribe = <SelectedValue>(
+    listener: (state: SelectedValue) => void,
+    selector: ContextSelector<Value, SelectedValue> = GET_SELLECTOR_NULL<
+      Value,
+      SelectedValue
+    >()
+  ) => {
+    checkIfMount()
+
+    const { current: cachedSelectedState }: { current: SelectedValue } = {
+      current: selector(cache.state!)
+    }
+
+    const subscriber: ContextListener<Value> = (payload) => {
+      const [, nextState] = payload
+      const nextSelectedState = selector(nextState)
+
+      // eslint-disable-next-line no-self-compare
+      const isCreatedOnFly = nextSelectedState !== selector(nextState)
+      const isEqual = isCreatedOnFly ? compareOneLevelDeepFunc : compareFunc
+
+      if (isEqual(cachedSelectedState, nextSelectedState)) {
+        listener(nextSelectedState)
+      }
+    }
+
+    contextListeners.push(subscriber)
+
+    /**
+     * Unsubscribe state
+     */
+    const unsubscribe = () => {
+      const index = contextListeners.indexOf(subscriber)
+      contextListeners.splice(index, 1)
+    }
+
+    return { unsubscribe }
+  }
+
+  return [BindProvider, useBindContextSelector, { getState, subscribe }]
 }
 
 export default state

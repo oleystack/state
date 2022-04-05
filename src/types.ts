@@ -18,15 +18,25 @@ export type ContextSelectorStatic<Value> = (<SelectedValue>(
 ) => Readonly<SelectedValue>) &
   (() => Readonly<Value>)
 
+export type ContextSubscriber<Value> = <SelectedValue>(
+  listener: (state: SelectedValue) => void,
+  selector?: ContextSelector<Value, SelectedValue>
+) => {
+  unsubscribe: () => void
+}
+
 export type ContextTuple<Props, Value> = [
   Provider<Props>,
   ContextSelectorHook<Value>,
   {
     getState: ContextSelectorStatic<Value>
+    subscribe: ContextSubscriber<Value>
   }
 ]
 
-export type ContextListener<Value> = (state: Value) => void
+export type ContextListener<Value> = (
+  payload: readonly [ContextVersion, Value]
+) => void
 
 export type Context<Value> = React.Context<Value> & {
   Provider: Provider<React.ProviderProps<Value>>
@@ -36,7 +46,7 @@ export type Context<Value> = React.Context<Value> & {
 
 export type ContextValue<Value> = {
   /** Holds a set of subscribers from components. */
-  listeners: ((payload: readonly [ContextVersion, Value]) => void)[]
+  listeners: ContextListener<Value>[]
 
   /** Holds an actual value of React's context that will be propagated down for computations. */
   value: React.MutableRefObject<Value>

@@ -5,6 +5,7 @@ import {
 } from 'scheduler'
 import {
   Context,
+  ContextListener,
   ContextReducer,
   ContextSelector,
   ContextValue,
@@ -18,6 +19,7 @@ const useIsomorphicLayoutEffect: typeof React.useEffect = canUseDOM()
   : React.useEffect
 
 const createProvider = <Value>(
+  listeners: ContextListener<Value>[],
   Original: React.Provider<ContextValue<Value>>
 ) => {
   const Provider: React.FC<React.ProviderProps<Value>> = (props) => {
@@ -34,7 +36,7 @@ const createProvider = <Value>(
       contextValue.current = {
         value: valueRef,
         version: versionRef,
-        listeners: []
+        listeners
       }
     }
 
@@ -65,14 +67,17 @@ const createProvider = <Value>(
   return Provider as unknown as React.Provider<ContextValue<Value>>
 }
 
-export const createContext = <Value>(defaultValue: Value): Context<Value> => {
+export const createContext = <Value>(
+  listeners: ContextListener<Value>[],
+  defaultValue: Value
+): Context<Value> => {
   const context = React.createContext<ContextValue<Value>>({
     value: { current: defaultValue },
     version: { current: -1 },
-    listeners: []
+    listeners
   })
 
-  context.Provider = createProvider<Value>(context.Provider)
+  context.Provider = createProvider<Value>(listeners, context.Provider)
 
   // We don't support Consumer API
   delete (context as unknown as Context<Value>).Consumer
@@ -106,7 +111,7 @@ export function useContextSelector<Value, SelectedValue = Value>(
   const currentSelectedState = selector(currentState)
 
   // eslint-disable-next-line no-self-compare
-  const isCreatedOnFly = selector(currentState) !== selector(currentState)
+  const isCreatedOnFly = currentSelectedState !== selector(currentState)
   const isEqual = isCreatedOnFly ? compareOneLevelDeepFunc : compareFunc
 
   const [[, cachedSelectedState], dispatch] = React.useReducer<
