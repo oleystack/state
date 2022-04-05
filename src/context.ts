@@ -11,7 +11,7 @@ import {
   ContextVersion
 } from './types'
 import { compareFunc, compareOneLevelDeepFunc } from './compare'
-import { canUseDOM, isDev } from './common'
+import { canUseDOM, GET_SELLECTOR_NULL, isDev } from './common'
 
 const useIsomorphicLayoutEffect: typeof React.useEffect = canUseDOM()
   ? React.useLayoutEffect
@@ -79,11 +79,6 @@ export const createContext = <Value>(defaultValue: Value): Context<Value> => {
 
   return context as unknown as Context<Value>
 }
-
-const GET_SELLECTOR_NULL =
-  <Value, SelectedValue>() =>
-  (state: Value) =>
-    state as unknown as SelectedValue
 
 export function useContextSelector<Value, SelectedValue = Value>(
   context: Context<Value>,

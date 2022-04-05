@@ -10,13 +10,23 @@ export type Provider<Props> = React.FC<Props>
 
 export type ContextSelectorHook<Value> = (<SelectedValue>(
   selector: ContextSelector<Value, SelectedValue>
-) => SelectedValue) &
-  (() => Value)
+) => Readonly<SelectedValue>) &
+  (() => Readonly<Value>)
+
+export type ContextSelectorStatic<Value> = (<SelectedValue>(
+  selector: ContextSelector<Value, SelectedValue>
+) => Readonly<SelectedValue>) &
+  (() => Readonly<Value>)
 
 export type ContextTuple<Props, Value> = [
   Provider<Props>,
-  ContextSelectorHook<Value>
+  ContextSelectorHook<Value>,
+  {
+    getState: ContextSelectorStatic<Value>
+  }
 ]
+
+export type ContextListener<Value> = (state: Value) => void
 
 export type Context<Value> = React.Context<Value> & {
   Provider: Provider<React.ProviderProps<Value>>
