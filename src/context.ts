@@ -11,12 +11,7 @@ import {
   ContextVersion
 } from './types'
 import { compareFunc, compareOneLevelDeepFunc } from './compare'
-
-const isDev = process.env.NODE_ENV !== 'production'
-
-const canUseDOM = (): boolean =>
-  typeof window !== 'undefined' &&
-  !!(window.document && window.document.createElement)
+import { canUseDOM, isDev } from './common'
 
 const useIsomorphicLayoutEffect: typeof React.useEffect = canUseDOM()
   ? React.useLayoutEffect
@@ -28,6 +23,7 @@ const createProvider = <Value>(
   const Provider: React.FC<React.ProviderProps<Value>> = (props) => {
     // Holds an actual "props.value"
     const valueRef = React.useRef(props.value)
+
     // Used to sync context updates and avoid stale values, can be considered as render/effect counter of Provider.
     const versionRef = React.useRef(0)
 
@@ -63,7 +59,7 @@ const createProvider = <Value>(
   }
 
   if (isDev) {
-    Provider.displayName = 'ContextSelector.Provider'
+    Provider.displayName = 'BitAboutState.Provider'
   }
 
   return Provider as unknown as React.Provider<ContextValue<Value>>
@@ -84,87 +80,99 @@ export const createContext = <Value>(defaultValue: Value): Context<Value> => {
   return context as unknown as Context<Value>
 }
 
-export function useContextSelector<Value, SelectedValue>(
-  context: Context<Value>,
-  selector?: ContextSelector<Value, SelectedValue>
-): SelectedValue
+const GET_SELLECTOR_NULL =
+  <Value, SelectedValue>() =>
+  (state: Value) =>
+    state as unknown as SelectedValue
 
-export function useContextSelector<Value>(context: Context<Value>): Value
-
-export function useContextSelector<Value, SelectedValue>(
+export function useContextSelector<Value, SelectedValue = Value>(
   context: Context<Value>,
-  selector?: ContextSelector<Value, SelectedValue>
-): Value | SelectedValue {
+  selector: ContextSelector<Value, SelectedValue> = GET_SELLECTOR_NULL<
+    Value,
+    SelectedValue
+  >()
+): SelectedValue {
   const contextValue = React.useContext(
     context as unknown as Context<ContextValue<Value>>
   )
 
   const {
-    value: { current: value },
+    value: { current: currentState },
     version: { current: version },
     listeners
   } = contextValue
 
-  if (version === -1) {
+  if (isDev && version === -1) {
     console.warn(
       'The context hook must be used in component wrapped with its corresponding Provider'
     )
   }
 
-  const selected = selector?.(value) ?? value
+  const currentSelectedState = selector(currentState)
 
   // eslint-disable-next-line no-self-compare
-  const isCreatedOnFly = selector && selector(value) !== selector(value)
+  const isCreatedOnFly = selector(currentState) !== selector(currentState)
   const isEqual = isCreatedOnFly ? compareOneLevelDeepFunc : compareFunc
 
-  const [state, dispatch] = React.useReducer<
-    ContextReducer<Value, Value | SelectedValue>
+  const [[, cachedSelectedState], dispatch] = React.useReducer<
+    ContextReducer<Value, SelectedValue>
   >(
     (
-      prevState: readonly [
+      prev: readonly [
         Value /* contextValue */,
-        Value | SelectedValue /* selector(value) */
+        SelectedValue /* selector(value) */
       ],
       payload:
         | undefined // undefined from render below
         | readonly [ContextVersion, Value] // from provider effect
-    ): readonly [Value, Value | SelectedValue] => {
+    ): readonly [Value, SelectedValue] => {
+      const update = [currentState, currentSelectedState] as const
+      const doNotUpdate = prev
+
+      // Update during component with hook rerender
       if (!payload) {
-        // early bail out when is dispatched during render
-        return [value, selected] as const
+        return update
       }
 
-      if (payload[0] <= version) {
-        if (isEqual(prevState[1], selected)) {
-          return prevState // bail out
+      const [prevState, prevSelectedState] = prev
+      const [nextVersion, nextState] = payload
+
+      // Update from provider props
+      if (nextVersion <= version) {
+        if (isEqual(prevSelectedState, currentSelectedState)) {
+          return doNotUpdate
         }
 
-        return [value, selected] as const
+        return update
       }
 
+      // Update from state-hook update
       try {
-        if (isEqual(prevState[0], payload[1])) {
-          return prevState // do not update
+        if (isEqual(prevState, nextState)) {
+          return doNotUpdate
         }
 
-        const nextSelected = selector?.(payload[1]) ?? payload[1]
+        const nextSelectedState = selector(nextState)
 
-        if (isEqual(prevState[1], nextSelected)) {
-          return prevState // do not update
+        if (isEqual(prevSelectedState, nextSelectedState)) {
+          return doNotUpdate
         }
-        return [payload[1], nextSelected] as const
+
+        return [nextState, nextSelectedState] as const
       } catch (e) {
-        // ignored (stale props or some other reason)
-        console.warn('Library discovered stale props issue')
+        // stale props or some other reason
+        if (isDev) {
+          console.warn('Library discovered stale props issue')
+        }
       }
 
-      // explicitly spread to enforce typing
-      return [prevState[0], prevState[1]] as const // schedule update
+      // Edge Case - Force update (create new array with old values)
+      return [prevState[0], prevState[1]] as const
     },
-    [value, selected] as const
+    [currentState, currentSelectedState] as const
   )
 
-  if (!isEqual(state[1], selected)) {
+  if (!isEqual(cachedSelectedState, currentSelectedState)) {
     // schedule re-render
     // this is safe because it's self contained
     dispatch(undefined)
@@ -179,5 +187,5 @@ export function useContextSelector<Value, SelectedValue>(
     }
   }, [listeners])
 
-  return state[1]
+  return currentSelectedState
 }

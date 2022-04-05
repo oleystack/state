@@ -3,7 +3,7 @@ import * as React from 'react'
 export type ContextVersion = number
 
 export type ContextSelector<Value, SelectedValue> = (
-  value: Value
+  value: Readonly<Value>
 ) => SelectedValue
 
 export type Provider<Props> = React.FC<Props>
