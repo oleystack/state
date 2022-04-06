@@ -105,13 +105,11 @@ const [Provider, useStore] = state(
 The third element of the `state()` result tuple is `store` object. Store is static helper which provides access to the store **without hook**.
 
 ```jsx
-const [Provider, useStore, store] = state(
-  () => {
-    const [alice, setAlice] = React.useState("Alice")
-    return { alice, setAlice }
-  }
-)
+const [Provider, useStore, store] = state(...)
+```
 
+and then
+```jsx
 // 👍 Get whole state
 const { alice } = store.get()
 
@@ -123,7 +121,7 @@ const subscriber = store
   .select(state => state.alice)
   .subscribe(alice => console.log(alice))
   
-// ...remember to unsubscribe!
+// remember to unsubscribe!
 subscriber.unsubscriber()
 ```
 
