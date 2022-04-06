@@ -78,8 +78,7 @@ const { alice, bob } = useStore(
 )
 ```
 
-> NOTE:<br />
-> **Values** in objects and arrays created on the fly are shallow compared.
+> NOTE: **Values** in objects and arrays created on the fly are shallow compared.
 
 ### 👉 Functions in state
 Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they rerender themselves.
@@ -101,6 +100,34 @@ const [Provider, useStore] = state(
   }
 )
 ```
+
+## Static store
+The third element of the `state()` result tuple is `store` object. Store is static helper which provides access to the store **without hook**.
+
+```jsx
+const [Provider, useStore, store] = state(
+  () => {
+    const [alice, setAlice] = React.useState("Alice")
+    return { alice, setAlice }
+  }
+)
+
+// 👍 Get whole state
+const { alice } = store.get()
+
+// 💪 Get substate
+const alice = store.select(state => state.alice).get()
+
+// 🤌 Subscribe store and listen on changes
+const subscriber = store
+  .select(state => state.alice)
+  .subscribe(alice => console.log(alice))
+  
+// ...remember to unsubscribe!
+subscriber.unsubscriber()
+```
+
+> NOTE: It's not necessary to fetch state via static `store` inside of Provider - but it still needs to be placed somewhere to init the state.
 
 ## State props
 The state hook allows you to pass any arguments into the context. It can be some initial state or you can even return it and pass it through to the components. Any state props change will update the context and trigger components rerendering **when necessary**.
