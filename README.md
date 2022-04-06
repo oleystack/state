@@ -98,7 +98,7 @@ const subscriber = store
   .subscribe(alice => console.log(alice))
   
 // remember to unsubscribe!
-subscriber.unsubscriber()
+subscriber.unsubscribe()
 ```
 
 > NOTE: It's not necessary to fetch state inside of the Provider - but it still needs to be placed somewhere to init the state.
