@@ -115,7 +115,9 @@ and then
 const { alice } = store.get()
 
 // 💪 Get substate
-const alice = store.select(state => state.alice).get()
+const alice = store
+  .select(state => state.alice)
+  .get()
 
 // 🤌 Subscribe store and listen on changes
 const subscriber = store
