@@ -8,26 +8,18 @@ function state<Props = {}, State = undefined>(
   useValue: (props: Props) => State
 ): StateTuple<Props, State> {
   const contextListeners: ContextListener<State>[] = []
-  const cache: { state?: Readonly<State>; isMount: boolean } = {
-    state: undefined,
-    isMount: false
+  const cache: { state: Readonly<State> | undefined } = {
+    state: undefined
   }
   const context = createContext<State>(contextListeners, {} as State)
-
-  const checkIfMount = () => {
-    if (!cache.isMount) {
-      throw new Error("'State is tried to pull, but without Provider wrapped'")
-    }
-  }
 
   /**
    * State Provider
    * @returns React.FC
    */
-  const BindProvider: Provider<Props> = ({ children, ...props }) => {
+  const StateProvider: Provider<Props> = ({ children, ...props }) => {
     const value = useValue(props as Props)
     cache.state = value
-    cache.isMount = true
 
     return React.createElement(context.Provider, { value }, children)
   }
@@ -37,7 +29,7 @@ function state<Props = {}, State = undefined>(
    * @param selector State Selector
    * @returns Substate
    */
-  const useBindContextSelector = <SelectedState>(
+  const useStateSelector = <SelectedState = State>(
     selector?: StateSelector<State, SelectedState>
   ) => useContextSelector(context, selector)
 
@@ -46,15 +38,13 @@ function state<Props = {}, State = undefined>(
    * @param selector  State Selector
    * @returns Substate
    */
-  const getState = <SelectedState>(
+  const getState = <SelectedState = State>(
     selector: StateSelector<State, SelectedState> = GET_SELLECTOR_NULL<
       State,
       SelectedState
     >()
   ) => {
-    checkIfMount()
-
-    return selector(cache.state!)
+    return cache.state ? selector(cache.state) : undefined
   }
 
   /**
@@ -69,10 +59,10 @@ function state<Props = {}, State = undefined>(
       SelectedState
     >()
   ) => {
-    checkIfMount()
-
-    const { current: cachedSelectedState }: { current: SelectedState } = {
-      current: selector(cache.state!)
+    const {
+      current: cachedSelectedState
+    }: { current: SelectedState | undefined } = {
+      current: cache.state ? selector(cache.state) : undefined
     }
 
     const subscriber: ContextListener<State> = (payload) => {
@@ -100,7 +90,7 @@ function state<Props = {}, State = undefined>(
     return { unsubscribe }
   }
 
-  return [BindProvider, useBindContextSelector, { getState, subscribe }]
+  return [StateProvider, useStateSelector, { getState, subscribe }]
 }
 
 export default state

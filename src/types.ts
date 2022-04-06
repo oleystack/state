@@ -13,8 +13,8 @@ export type StateSelectorHook<State> = (<SelectedState>(
 
 export type StateSelectorStatic<State> = (<SelectedState>(
   selector: StateSelector<State, SelectedState>
-) => Readonly<SelectedState>) &
-  (() => Readonly<State>)
+) => Readonly<SelectedState> | undefined) &
+  (() => Readonly<State> | undefined)
 
 export type StateSubscriber<State> = (<SelectedState>(
   listener: (state: SelectedState) => void,
