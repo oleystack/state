@@ -107,17 +107,15 @@ subscriber.unsubscribe()
 The state hook allows you to pass any arguments into the context. It can be some initial state or you can even return it and pass it through to the components. Any state props change will update the context and trigger components rerendering **when necessary**.
 
 ```tsx
-type HookProps = { alice: string, bob: string }
-
-const [Provider, useStore] = state(
-  (props: HookProps) => {
-    const [alice, setAlice] = React.useState(props.alice)
-    return { alice, setAlice, bob: props.bob }
+const [UserProvider, useUser] = state(
+  ({ userId }) => {
+    const [user] = React.useState(() => getMyUser(userId))
+    return user
   }
 )
 
-const App = () => (
-  <Provider alice="Alice" bob="Bob">
+const UserProfile = ({ userId }) => (
+  <Provider userId={userId}>
     ...
   </Provider>
 )
