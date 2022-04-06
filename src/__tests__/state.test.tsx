@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { fireEvent, render } from '@testing-library/react'
 import state from '../state'
-import { ContextSelector } from '../types'
+import { StateSelector } from '../types'
 
 // Counter Component
 const Counter = ({ role = 'counter' }: { role: string }) => {
@@ -644,7 +644,7 @@ test('Shallow comparasion', () => {
 })
 
 test('Shallow comparasion selector switching', () => {
-  const SELLECTOR: ContextSelector<{}, any>[] = [
+  const SELLECTOR: StateSelector<{}, any>[] = [
     () => [1, 2, 3],
     () => [1, 2],
     () => ({ a: 1 }),

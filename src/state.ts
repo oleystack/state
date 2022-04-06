@@ -1,23 +1,18 @@
 import * as React from 'react'
-import { GET_SELLECTOR_NULL } from './common'
+import { GET_SELLECTOR_NULL, isSelectorObjectCreatedOnFly } from './common'
 import { compareFunc, compareOneLevelDeepFunc } from './compare'
 import { createContext, useContextSelector } from './context'
-import {
-  ContextListener,
-  ContextSelector,
-  ContextTuple,
-  Provider
-} from './types'
+import { ContextListener, StateSelector, Provider, StateTuple } from './types'
 
-function state<Props = {}, Value = undefined>(
-  useValue: (props: Props) => Value
-): ContextTuple<Props, Value> {
-  const contextListeners: ContextListener<Value>[] = []
-  const cache: { state?: Readonly<Value>; isMount: boolean } = {
+function state<Props = {}, State = undefined>(
+  useValue: (props: Props) => State
+): StateTuple<Props, State> {
+  const contextListeners: ContextListener<State>[] = []
+  const cache: { state?: Readonly<State>; isMount: boolean } = {
     state: undefined,
     isMount: false
   }
-  const context = createContext<Value>(contextListeners, {} as Value)
+  const context = createContext<State>(contextListeners, {} as State)
 
   const checkIfMount = () => {
     if (!cache.isMount) {
@@ -42,8 +37,8 @@ function state<Props = {}, Value = undefined>(
    * @param selector State Selector
    * @returns Substate
    */
-  const useBindContextSelector = <SelectedValue>(
-    selector?: ContextSelector<Value, SelectedValue>
+  const useBindContextSelector = <SelectedState>(
+    selector?: StateSelector<State, SelectedState>
   ) => useContextSelector(context, selector)
 
   /**
@@ -51,10 +46,10 @@ function state<Props = {}, Value = undefined>(
    * @param selector  State Selector
    * @returns Substate
    */
-  const getState = <SelectedValue>(
-    selector: ContextSelector<Value, SelectedValue> = GET_SELLECTOR_NULL<
-      Value,
-      SelectedValue
+  const getState = <SelectedState>(
+    selector: StateSelector<State, SelectedState> = GET_SELLECTOR_NULL<
+      State,
+      SelectedState
     >()
   ) => {
     checkIfMount()
@@ -67,26 +62,25 @@ function state<Props = {}, Value = undefined>(
    * @param eventListeners List of subscribed events
    * @returns Subscriber with unsubscribe method
    */
-  const subscribe = <SelectedValue>(
-    listener: (state: SelectedValue) => void,
-    selector: ContextSelector<Value, SelectedValue> = GET_SELLECTOR_NULL<
-      Value,
-      SelectedValue
+  const subscribe = <SelectedState = State>(
+    listener: (state: SelectedState) => void,
+    selector: StateSelector<State, SelectedState> = GET_SELLECTOR_NULL<
+      State,
+      SelectedState
     >()
   ) => {
     checkIfMount()
 
-    const { current: cachedSelectedState }: { current: SelectedValue } = {
+    const { current: cachedSelectedState }: { current: SelectedState } = {
       current: selector(cache.state!)
     }
 
-    const subscriber: ContextListener<Value> = (payload) => {
+    const subscriber: ContextListener<State> = (payload) => {
       const [, nextState] = payload
-      const nextSelectedState = selector(nextState)
 
-      // eslint-disable-next-line no-self-compare
-      const isCreatedOnFly = nextSelectedState !== selector(nextState)
-      const isEqual = isCreatedOnFly ? compareOneLevelDeepFunc : compareFunc
+      const isObjCreatedOnFly = isSelectorObjectCreatedOnFly(selector)
+      const nextSelectedState = selector(nextState)
+      const isEqual = isObjCreatedOnFly ? compareOneLevelDeepFunc : compareFunc
 
       if (isEqual(cachedSelectedState, nextSelectedState)) {
         listener(nextSelectedState)

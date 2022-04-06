@@ -7,22 +7,17 @@ import {
   Context,
   ContextListener,
   ContextReducer,
-  ContextSelector,
+  StateSelector,
   ContextValue,
   ContextVersion
 } from './types'
 import { compareFunc, compareOneLevelDeepFunc } from './compare'
-import { canUseDOM, GET_SELLECTOR_NULL, isDev } from './common'
-
-// Todo: test
-const isSelectorObjectCreatedOnFly = <Value, SelectedValue>(
-  selector: ContextSelector<Value, SelectedValue>
-) => {
-  const obj = {} as Value
-
-  // eslint-disable-next-line no-self-compare
-  return selector(obj) !== selector(obj)
-}
+import {
+  canUseDOM,
+  GET_SELLECTOR_NULL,
+  isDev,
+  isSelectorObjectCreatedOnFly
+} from './common'
 
 const useIsomorphicLayoutEffect: typeof React.useEffect = canUseDOM()
   ? React.useLayoutEffect
@@ -97,7 +92,7 @@ export const createContext = <Value>(
 
 export function useContextSelector<Value, SelectedValue = Value>(
   context: Context<Value>,
-  selector: ContextSelector<Value, SelectedValue> = GET_SELLECTOR_NULL<
+  selector: StateSelector<Value, SelectedValue> = GET_SELLECTOR_NULL<
     Value,
     SelectedValue
   >()

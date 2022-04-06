@@ -1,38 +1,41 @@
 import * as React from 'react'
 
-export type ContextVersion = number
-
-export type ContextSelector<Value, SelectedValue> = (
-  value: Readonly<Value>
-) => SelectedValue
+export type StateSelector<State, SelectedState> = (
+  state: Readonly<State>
+) => SelectedState
 
 export type Provider<Props> = React.FC<Props>
 
-export type ContextSelectorHook<Value> = (<SelectedValue>(
-  selector: ContextSelector<Value, SelectedValue>
-) => Readonly<SelectedValue>) &
-  (() => Readonly<Value>)
+export type StateSelectorHook<State> = (<SelectedState>(
+  selector: StateSelector<State, SelectedState>
+) => Readonly<SelectedState>) &
+  (() => Readonly<State>)
 
-export type ContextSelectorStatic<Value> = (<SelectedValue>(
-  selector: ContextSelector<Value, SelectedValue>
-) => Readonly<SelectedValue>) &
-  (() => Readonly<Value>)
+export type StateSelectorStatic<State> = (<SelectedState>(
+  selector: StateSelector<State, SelectedState>
+) => Readonly<SelectedState>) &
+  (() => Readonly<State>)
 
-export type ContextSubscriber<Value> = <SelectedValue>(
-  listener: (state: SelectedValue) => void,
-  selector?: ContextSelector<Value, SelectedValue>
+export type StateSubscriber<State> = (<SelectedState>(
+  listener: (state: SelectedState) => void,
+  selector?: StateSelector<State, SelectedState>
 ) => {
   unsubscribe: () => void
-}
+}) &
+  ((listener: (state: State) => void) => {
+    unsubscribe: () => void
+  })
 
-export type ContextTuple<Props, Value> = [
+export type StateTuple<Props, State> = [
   Provider<Props>,
-  ContextSelectorHook<Value>,
+  StateSelectorHook<State>,
   {
-    getState: ContextSelectorStatic<Value>
-    subscribe: ContextSubscriber<Value>
+    getState: StateSelectorStatic<State>
+    subscribe: StateSubscriber<State>
   }
 ]
+
+export type ContextVersion = number
 
 export type ContextListener<Value> = (
   payload: readonly [ContextVersion, Value]

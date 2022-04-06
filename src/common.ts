@@ -1,3 +1,5 @@
+import { StateSelector } from './types'
+
 export const isDev = process.env.NODE_ENV !== 'production'
 
 export const canUseDOM = (): boolean =>
@@ -8,3 +10,13 @@ export const GET_SELLECTOR_NULL =
   <Value, SelectedValue>() =>
   (state: Value) =>
     state as unknown as SelectedValue
+
+// Todo: test
+export const isSelectorObjectCreatedOnFly = <Value, SelectedValue>(
+  selector: StateSelector<Value, SelectedValue>
+) => {
+  const obj = {} as Value
+
+  // eslint-disable-next-line no-self-compare
+  return selector(obj) !== selector(obj)
+}
