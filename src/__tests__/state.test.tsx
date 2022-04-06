@@ -12,13 +12,13 @@ const Counter = ({ role = 'counter' }: { role: string }) => {
 
 test('Basic usage', () => {
   const VALUE = 'Alice'
-  const [Provider, useBase] = state(() => {
+  const [Provider, useStore] = state(() => {
     const [value] = React.useState(VALUE)
     return { value }
   })
 
   const Child = () => {
-    const { value } = useBase()
+    const { value } = useStore()
     return <p role='value'>{value}</p>
   }
 
@@ -32,18 +32,18 @@ test('Basic usage', () => {
 })
 
 test('Rerender', () => {
-  const [Provider, useBase] = state(() => {
+  const [Provider, useStore] = state(() => {
     const [value, setValue] = React.useState(0)
     return { value, setValue }
   })
 
   const Button = () => {
-    const { setValue } = useBase()
+    const { setValue } = useStore()
     return <button role='button' onClick={() => setValue(5)} />
   }
 
   const Child = () => {
-    const { value } = useBase()
+    const { value } = useStore()
     return <p role='value'>{value}</p>
   }
 
@@ -60,14 +60,14 @@ test('Rerender', () => {
 })
 
 test('Rerender with selectors', () => {
-  const [Provider, useBase] = state(() => {
+  const [Provider, useStore] = state(() => {
     const [alice, setAlice] = React.useState(0)
     const [bob, setBob] = React.useState(0)
     return { alice, setAlice, bob, setBob }
   })
 
   const Buttons = () => {
-    const [setAlice, setBob] = useBase((state) => [
+    const [setAlice, setBob] = useStore((state) => [
       state.setAlice,
       state.setBob
     ])
@@ -87,7 +87,7 @@ test('Rerender with selectors', () => {
   }
 
   const Alice = () => {
-    const alice = useBase((state) => state.alice)
+    const alice = useStore((state) => state.alice)
     return (
       <>
         <Counter role='counter_alice' />
@@ -97,7 +97,7 @@ test('Rerender with selectors', () => {
   }
 
   const Bob = () => {
-    const bob = useBase((state) => state.bob)
+    const bob = useStore((state) => state.bob)
     return (
       <>
         <Counter role='counter_bob' />
@@ -178,14 +178,14 @@ test('Rerender with selectors', () => {
 })
 
 test('Rerender with all selectors', () => {
-  const [Provider, useBase] = state(() => {
+  const [Provider, useStore] = state(() => {
     const [alice, setAlice] = React.useState(0)
     const [bob, setBob] = React.useState(0)
     return { alice, setAlice, bob, setBob }
   })
 
   const Buttons = () => {
-    const [setAlice, setBob] = useBase((state) => [
+    const [setAlice, setBob] = useStore((state) => [
       state.setAlice,
       state.setBob
     ])
@@ -205,7 +205,7 @@ test('Rerender with all selectors', () => {
   }
 
   const AllSelector = () => {
-    const { alice } = useBase()
+    const { alice } = useStore()
     return (
       <>
         <Counter role='counter_all_selector' />
@@ -215,7 +215,7 @@ test('Rerender with all selectors', () => {
   }
 
   const KeySelector = () => {
-    const alice = useBase((state) => state.alice)
+    const alice = useStore((state) => state.alice)
     return (
       <>
         <Counter role='counter_key_selector' />
@@ -225,7 +225,7 @@ test('Rerender with all selectors', () => {
   }
 
   const ArraySelector = () => {
-    const [alice] = useBase((state) => [state.alice])
+    const [alice] = useStore((state) => [state.alice])
     return (
       <>
         <Counter role='counter_array_selector' />
@@ -235,7 +235,7 @@ test('Rerender with all selectors', () => {
   }
 
   const ObjSelector = () => {
-    const { alice } = useBase((state) => ({ alice: state.alice }))
+    const { alice } = useStore((state) => ({ alice: state.alice }))
     return (
       <>
         <Counter role='counter_obj_selector' />
@@ -355,13 +355,13 @@ test('Rerender with all selectors', () => {
 
 test('No provider error', () => {
   jest.spyOn(console, 'warn').mockImplementation(() => {})
-  const [, useBase] = state(() => {
+  const [, useStore] = state(() => {
     const [value] = React.useState(0)
     return { value }
   })
 
   const Child = () => {
-    const { value } = useBase()
+    const { value } = useStore()
     return <p role='value'>{value}</p>
   }
 
@@ -373,14 +373,14 @@ test('No provider error', () => {
 })
 
 test('Multiple selectors type in one component', () => {
-  const [Provider, useBase] = state(() => {
+  const [Provider, useStore] = state(() => {
     const [alice, setAlice] = React.useState(0)
     const [bob, setBob] = React.useState(0)
     return { alice, setAlice, bob, setBob }
   })
 
   const Buttons = () => {
-    const [setAlice, setBob] = useBase((state) => [
+    const [setAlice, setBob] = useStore((state) => [
       state.setAlice,
       state.setBob
     ])
@@ -400,11 +400,11 @@ test('Multiple selectors type in one component', () => {
   }
 
   const Alice = () => {
-    const alice = useBase((state) => state.alice)
+    const alice = useStore((state) => state.alice)
 
-    useBase((state) => state.alice)
-    useBase((state) => [state.alice, state.setAlice])
-    useBase((state) => ({
+    useStore((state) => state.alice)
+    useStore((state) => [state.alice, state.setAlice])
+    useStore((state) => ({
       alice: state.alice,
       bob: state.setAlice
     }))
@@ -478,7 +478,7 @@ test('Shallow comparasion', () => {
   const OBJ_X = { a: -1 }
   const OBJ_Y = { a: 1 }
 
-  const [Provider, useBase] = state(() => {
+  const [Provider, useStore] = state(() => {
     const [, forceUpdate] = React.useReducer((x) => x + 1, 0)
 
     const [alice, setAlice] = React.useState({ abc: OBJ_X })
@@ -493,7 +493,7 @@ test('Shallow comparasion', () => {
   })
 
   const Buttons = () => {
-    const [provokeRerender, setAlice, setBob] = useBase((state) => [
+    const [provokeRerender, setAlice, setBob] = useStore((state) => [
       state.provokeRerender,
       state.setAlice,
       state.setBob
@@ -516,7 +516,7 @@ test('Shallow comparasion', () => {
   }
 
   const Alice = () => {
-    useBase((state) => state.alice)
+    useStore((state) => state.alice)
 
     return (
       <>
@@ -526,7 +526,7 @@ test('Shallow comparasion', () => {
   }
 
   const Bob = () => {
-    useBase((state) => state.bob)
+    useStore((state) => state.bob)
 
     return (
       <>
@@ -536,7 +536,7 @@ test('Shallow comparasion', () => {
   }
 
   const BothArray = () => {
-    useBase((state) => [state.alice, state.bob])
+    useStore((state) => [state.alice, state.bob])
 
     return (
       <>
@@ -546,7 +546,7 @@ test('Shallow comparasion', () => {
   }
 
   const BothObj = () => {
-    useBase((state) => ({ alice: state.alice, bob: state.bob }))
+    useStore((state) => ({ alice: state.alice, bob: state.bob }))
 
     return (
       <>
@@ -658,13 +658,13 @@ test('Shallow comparasion selector switching', () => {
     () => 3
   ]
 
-  const [Provider, useBase] = state(() => {
+  const [Provider, useStore] = state(() => {
     return {}
   })
 
   const Child = () => {
     const [index, setIndex] = React.useState(0)
-    useBase(SELLECTOR[index])
+    useStore(SELLECTOR[index])
 
     return (
       <>
@@ -694,4 +694,153 @@ test('Shallow comparasion selector switching', () => {
     expect(Number(getByRole('index').textContent)).toEqual(i + 1) // For better test maintenance
     expect(getByRole('counter').textContent).toEqual((i + 2).toString())
   }
+})
+
+test('Store static get', () => {
+  const [Provider, useStore, store] = state(() => {
+    const [value, setValue] = React.useState(0)
+    return { value, setValue }
+  })
+
+  const Child = () => {
+    const { value, setValue } = useStore()
+
+    return (
+      <>
+        <button
+          role='increase'
+          onClick={() => setValue((value) => value + 1)}
+        />
+        <Counter role='counter' />
+        <p role='value'>{value}</p>
+      </>
+    )
+  }
+
+  const App = () => (
+    <Provider>
+      <Child />
+    </Provider>
+  )
+  expect(store.get()).toEqual(undefined)
+  const { getByRole } = render(<App />)
+  expect(getByRole('value').textContent).toEqual('0')
+  expect(store.get()?.value).toEqual(0)
+
+  fireEvent.click(getByRole('increase'))
+  expect(store.get()?.value).toEqual(1)
+  expect(getByRole('value').textContent).toEqual('1')
+
+  fireEvent.click(getByRole('increase'))
+  expect(store.get()?.value).toEqual(2)
+  expect(getByRole('value').textContent).toEqual('2')
+})
+
+test('Store static get with selector', () => {
+  const [Provider, useStore, store] = state(() => {
+    const [alice, setAlice] = React.useState(0)
+    const [bob, setBob] = React.useState(0)
+    return { alice, setAlice, bob, setBob }
+  })
+
+  const Child = () => {
+    const { alice, bob, setBob, setAlice } = useStore()
+
+    return (
+      <>
+        <button
+          role='increase_alice'
+          onClick={() => setAlice((alice) => alice + 1)}
+        />
+        <button role='increase_bob' onClick={() => setBob((bob) => bob + 1)} />
+        <p role='alice'>{alice}</p>
+        <p role='bob'>{bob}</p>
+      </>
+    )
+  }
+
+  const App = () => (
+    <Provider>
+      <Child />
+    </Provider>
+  )
+
+  const { getByRole } = render(<App />)
+
+  expect(getByRole('alice').textContent).toEqual('0')
+  expect(store.select((state) => state.alice).get()).toEqual(0)
+  expect(getByRole('bob').textContent).toEqual('0')
+  expect(store.select((state) => state.bob).get()).toEqual(0)
+
+  fireEvent.click(getByRole('increase_alice'))
+
+  expect(getByRole('alice').textContent).toEqual('1')
+  expect(store.select((state) => state.alice).get()).toEqual(1)
+  expect(getByRole('bob').textContent).toEqual('0')
+  expect(store.select((state) => state.bob).get()).toEqual(0)
+
+  fireEvent.click(getByRole('increase_bob'))
+
+  expect(getByRole('alice').textContent).toEqual('1')
+  expect(store.select((state) => state.alice).get()).toEqual(1)
+  expect(getByRole('bob').textContent).toEqual('1')
+  expect(store.select((state) => state.bob).get()).toEqual(1)
+})
+
+test('Store static subscribe', () => {
+  const [Provider, useStore, store] = state(() => {
+    const [alice, setAlice] = React.useState(0)
+    const [bob, setBob] = React.useState(0)
+    return { alice, setAlice, bob, setBob }
+  })
+
+  const Child = () => {
+    const { alice, bob, setBob, setAlice } = useStore()
+
+    return (
+      <>
+        <button
+          role='increase_alice'
+          onClick={() => setAlice((alice) => alice + 1)}
+        />
+        <button role='increase_bob' onClick={() => setBob((bob) => bob + 1)} />
+        <p role='alice'>{alice}</p>
+        <p role='bob'>{bob}</p>
+      </>
+    )
+  }
+
+  const App = () => (
+    <Provider>
+      <Child />
+    </Provider>
+  )
+
+  const { getByRole } = render(<App />)
+
+  const listener = jest.fn()
+  const subscriber = store.select((state) => state.alice).subscribe(listener)
+  expect(listener).toBeCalledTimes(0)
+
+  expect(getByRole('alice').textContent).toEqual('0')
+  expect(store.select((state) => state.alice).get()).toEqual(0)
+  expect(listener).toBeCalledTimes(0)
+  fireEvent.click(getByRole('increase_alice'))
+  expect(getByRole('alice').textContent).toEqual('1')
+  expect(listener).toBeCalledTimes(1)
+  expect(listener).toHaveBeenCalledWith(1)
+
+  fireEvent.click(getByRole('increase_alice'))
+  expect(getByRole('alice').textContent).toEqual('2')
+  expect(listener).toBeCalledTimes(2)
+  expect(listener).toHaveBeenCalledWith(2)
+
+  fireEvent.click(getByRole('increase_bob'))
+  expect(getByRole('bob').textContent).toEqual('1')
+  expect(listener).toBeCalledTimes(2)
+
+  subscriber.unsubscribe()
+  fireEvent.click(getByRole('increase_alice'))
+  expect(getByRole('alice').textContent).toEqual('3')
+  expect(listener).toBeCalledTimes(2)
 })

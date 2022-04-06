@@ -2,15 +2,24 @@ import * as React from 'react'
 import { GET_SELLECTOR_NULL, isSelectorObjectCreatedOnFly } from './common'
 import { compareFunc, compareOneLevelDeepFunc } from './compare'
 import { createContext, useContextSelector } from './context'
-import { ContextListener, StateSelector, Provider, StateTuple } from './types'
+import {
+  ContextListener,
+  StateSelector,
+  Provider,
+  StateTuple,
+  StateStore
+} from './types'
 
 function state<Props = {}, State = undefined>(
   useValue: (props: Props) => State
 ): StateTuple<Props, State> {
   const contextListeners: ContextListener<State>[] = []
-  const cache: { state: Readonly<State> | undefined } = {
+
+  type Cache = { state: Readonly<State> | undefined }
+  const cache: Cache = {
     state: undefined
   }
+
   const context = createContext<State>(contextListeners, {} as State)
 
   /**
@@ -37,63 +46,78 @@ function state<Props = {}, State = undefined>(
   ) => useContextSelector(context, selector)
 
   /**
-   * Static state getter
-   * @param selector  State Selector
-   * @returns Substate
+   * Helper for creating recuring static state
+   * @param selector State selector
+   * @returns StateStatic
    */
-  const getState = <SelectedState = State>(
-    selector: StateSelector<State, SelectedState> = GET_SELLECTOR_NULL<
-      State,
-      SelectedState
-    >()
-  ) => {
-    return cache.state !== undefined ? selector(cache.state) : undefined
+  const createStatic = <SelectedState>(
+    selector: StateSelector<State, SelectedState>
+  ): StateStore<SelectedState> => {
+    /**
+     * Returns current state
+     * @returns Current state
+     */
+    const get = () => {
+      return cache.state !== undefined ? selector(cache.state) : undefined
+    }
+
+    /**
+     * Select substate
+     * @param nextSelector
+     * @returns Selected StateStatic
+     */
+    const select = <NextSelectedState>(
+      nextSelector: StateSelector<SelectedState, NextSelectedState>
+    ) => createStatic((state) => nextSelector(selector(state)))
+
+    /**
+     * Listen on state changes
+     * @param listener
+     * @returns Subscription object
+     */
+    const subscribe = (listener: (state: Readonly<SelectedState>) => void) => {
+      type Cache = { current: SelectedState | undefined }
+      const subscriberCache: Cache = {
+        current: cache.state !== undefined ? selector(cache.state) : undefined
+      }
+
+      const subscriber: ContextListener<State> = (payload) => {
+        const [, nextState] = payload
+
+        const isObjCreatedOnFly = isSelectorObjectCreatedOnFly(selector)
+        const nextSelectedState = selector(nextState)
+        const isEqual = isObjCreatedOnFly
+          ? compareOneLevelDeepFunc
+          : compareFunc
+
+        if (!isEqual(subscriberCache.current, nextSelectedState)) {
+          subscriberCache.current = nextSelectedState
+          listener(nextSelectedState)
+        }
+      }
+
+      contextListeners.push(subscriber)
+
+      /**
+       * Unsubscribe state
+       */
+      const unsubscribe = () => {
+        const index = contextListeners.indexOf(subscriber)
+        contextListeners.splice(index, 1)
+      }
+
+      return { unsubscribe }
+    }
+
+    return { get, select, subscribe }
   }
 
   /**
-   * Subscriber for non-hook aproaches
-   * @param eventListeners List of subscribed events
-   * @returns Subscriber with unsubscribe method
+   * Init static recuring
    */
-  const subscribe = <SelectedState = State>(
-    listener: (state: SelectedState) => void,
-    selector: StateSelector<State, SelectedState> = GET_SELLECTOR_NULL<
-      State,
-      SelectedState
-    >()
-  ) => {
-    const {
-      current: cachedSelectedState
-    }: { current: SelectedState | undefined } = {
-      current: cache.state !== undefined ? selector(cache.state) : undefined
-    }
+  const staticState = createStatic(GET_SELLECTOR_NULL<State, State>())
 
-    const subscriber: ContextListener<State> = (payload) => {
-      const [, nextState] = payload
-
-      const isObjCreatedOnFly = isSelectorObjectCreatedOnFly(selector)
-      const nextSelectedState = selector(nextState)
-      const isEqual = isObjCreatedOnFly ? compareOneLevelDeepFunc : compareFunc
-
-      if (isEqual(cachedSelectedState, nextSelectedState)) {
-        listener(nextSelectedState)
-      }
-    }
-
-    contextListeners.push(subscriber)
-
-    /**
-     * Unsubscribe state
-     */
-    const unsubscribe = () => {
-      const index = contextListeners.indexOf(subscriber)
-      contextListeners.splice(index, 1)
-    }
-
-    return { unsubscribe }
-  }
-
-  return [StateProvider, useStateSelector, { getState, subscribe }]
+  return [StateProvider, useStateSelector, staticState]
 }
 
 export default state

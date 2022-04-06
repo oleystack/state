@@ -11,28 +11,22 @@ export type StateSelectorHook<State> = (<SelectedState>(
 ) => Readonly<SelectedState>) &
   (() => Readonly<State>)
 
-export type StateSelectorStatic<State> = (<SelectedState>(
-  selector: StateSelector<State, SelectedState>
-) => Readonly<SelectedState> | undefined) &
-  (() => Readonly<State> | undefined)
-
-export type StateSubscriber<State> = (<SelectedState>(
-  listener: (state: SelectedState) => void,
-  selector?: StateSelector<State, SelectedState>
-) => {
+export type StateSubscriber<State> = (listener: (state: State) => void) => {
   unsubscribe: () => void
-}) &
-  ((listener: (state: State) => void) => {
-    unsubscribe: () => void
-  })
+}
+
+export type StateStore<State> = {
+  get: () => State | undefined
+  select: <SelectedState>(
+    selector: StateSelector<State, SelectedState>
+  ) => StateStore<SelectedState>
+  subscribe: StateSubscriber<State>
+}
 
 export type StateTuple<Props, State> = [
   Provider<Props>,
   StateSelectorHook<State>,
-  {
-    getState: StateSelectorStatic<State>
-    subscribe: StateSubscriber<State>
-  }
+  StateStore<State>
 ]
 
 export type ContextVersion = number
