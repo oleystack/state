@@ -44,7 +44,7 @@ function state<Props = {}, State = undefined>(
       SelectedState
     >()
   ) => {
-    return cache.state ? selector(cache.state) : undefined
+    return cache.state !== undefined ? selector(cache.state) : undefined
   }
 
   /**
@@ -62,7 +62,7 @@ function state<Props = {}, State = undefined>(
     const {
       current: cachedSelectedState
     }: { current: SelectedState | undefined } = {
-      current: cache.state ? selector(cache.state) : undefined
+      current: cache.state !== undefined ? selector(cache.state) : undefined
     }
 
     const subscriber: ContextListener<State> = (payload) => {
