@@ -30,7 +30,10 @@ function state<Props = {}, State = undefined>(
    * @returns Substate
    */
   const useStateSelector = <SelectedState = State>(
-    selector?: StateSelector<State, SelectedState>
+    selector: StateSelector<State, SelectedState> = GET_SELLECTOR_NULL<
+      State,
+      SelectedState
+    >()
   ) => useContextSelector(context, selector)
 
   /**

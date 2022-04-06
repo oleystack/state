@@ -10,7 +10,7 @@ function is(x: any, y: any) {
 }
 
 /* istanbul ignore next */
-const objectIs: (x: any, y: any) => boolean =
+const isEqualObject: (x: any, y: any) => boolean =
   typeof Object.is === 'function' ? Object.is : is
 
 const isObject = (value: any): boolean => typeof value === 'object' && !!value
@@ -22,7 +22,7 @@ const isEqualArray = <A, B>(x: A[], y: B[]): boolean => {
   }
 
   for (let i = 0; i < x.length; i++) {
-    if (!objectIs(x[i], y[i])) {
+    if (!isEqualObject(x[i], y[i])) {
       return false
     }
   }
@@ -30,7 +30,7 @@ const isEqualArray = <A, B>(x: A[], y: B[]): boolean => {
   return true
 }
 
-const isEqualOneLevelDeep = (x: any, y: any): boolean => {
+const isEqualObjectOneLevelDeep = (x: any, y: any): boolean => {
   if (x === y) {
     return true
   }
@@ -53,8 +53,8 @@ const isEqualOneLevelDeep = (x: any, y: any): boolean => {
     return true
   }
 
-  return objectIs(x, y)
+  return isEqualObject(x, y)
 }
 
-export const compareOneLevelDeepFunc = isEqualOneLevelDeep
-export const compareFunc = objectIs
+export const compareOneLevelDeepFunc = isEqualObjectOneLevelDeep
+export const compareFunc = isEqualObject

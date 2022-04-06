@@ -12,13 +12,9 @@ import {
   ContextVersion
 } from './types'
 import { compareFunc, compareOneLevelDeepFunc } from './compare'
-import {
-  canUseDOM,
-  GET_SELLECTOR_NULL,
-  isDev,
-  isSelectorObjectCreatedOnFly
-} from './common'
+import { canUseDOM, isDev, isSelectorObjectCreatedOnFly } from './common'
 
+/* istanbul ignore next */
 const useIsomorphicLayoutEffect: typeof React.useEffect = canUseDOM()
   ? React.useLayoutEffect
   : React.useEffect
@@ -65,6 +61,7 @@ const createProvider = <Value>(
     )
   }
 
+  /* istanbul ignore next */
   if (isDev) {
     Provider.displayName = 'BitAboutState.Provider'
   }
@@ -90,12 +87,9 @@ export const createContext = <Value>(
   return context as unknown as Context<Value>
 }
 
-export function useContextSelector<Value, SelectedValue = Value>(
+export function useContextSelector<Value, SelectedValue>(
   context: Context<Value>,
-  selector: StateSelector<Value, SelectedValue> = GET_SELLECTOR_NULL<
-    Value,
-    SelectedValue
-  >()
+  selector: StateSelector<Value, SelectedValue>
 ): SelectedValue {
   const contextValue = React.useContext(
     context as unknown as Context<ContextValue<Value>>
@@ -103,11 +97,11 @@ export function useContextSelector<Value, SelectedValue = Value>(
 
   const {
     value: { current: currentState },
-    version: { current: version },
+    version: { current: currentVersion },
     listeners
   } = contextValue
 
-  if (isDev && version === -1) {
+  if (isDev && currentVersion === -1) {
     console.warn(
       'The context hook must be used in component wrapped with its corresponding Provider'
     )
@@ -125,7 +119,7 @@ export function useContextSelector<Value, SelectedValue = Value>(
     ContextReducer<Value, SelectedValue>
   >(
     (
-      prev: readonly [
+      cached: readonly [
         Value /* contextValue */,
         SelectedValue /* selector(value) */
       ],
@@ -134,19 +128,19 @@ export function useContextSelector<Value, SelectedValue = Value>(
         | readonly [ContextVersion, Value] // from provider effect
     ): readonly [Value, SelectedValue] => {
       const update = [currentState, currentSelectedState] as const
-      const doNotUpdate = prev
+      const doNotUpdate = cached
 
       // Update during component with hook rerender
       if (!payload) {
         return update
       }
 
-      const [prevState, prevSelectedState] = prev
+      const [cachedState, cachedSelectedState] = cached
       const [nextVersion, nextState] = payload
 
       // Update from provider props
-      if (nextVersion <= version) {
-        if (isEqualSelectedState(prevSelectedState, currentSelectedState)) {
+      if (nextVersion <= currentVersion) {
+        if (isEqualSelectedState(cachedSelectedState, currentSelectedState)) {
           return doNotUpdate
         }
 
@@ -155,26 +149,29 @@ export function useContextSelector<Value, SelectedValue = Value>(
 
       // Update from state-hook update
       try {
-        if (isEqualState(prevState, nextState)) {
+        if (isEqualState(cachedState, nextState)) {
           return doNotUpdate
         }
 
         const nextSelectedState = selector(nextState)
 
-        if (isEqualSelectedState(prevSelectedState, nextSelectedState)) {
+        if (isEqualSelectedState(cachedSelectedState, nextSelectedState)) {
           return doNotUpdate
         }
 
         return [nextState, nextSelectedState] as const
       } catch (e) {
         // stale props or some other reason
-        if (isDev) {
-          console.warn('Library discovered stale props issue')
-        }
+      }
+
+      /* istanbul ignore next */
+      if (isDev) {
+        console.warn('Library discovered stale props issue')
       }
 
       // Edge Case - Force update (create new array with old values)
-      return [prevState, prevSelectedState] as const
+      /* istanbul ignore next */
+      return [cachedState, cachedSelectedState] as const
     },
     [currentState, currentSelectedState] as const
   )
