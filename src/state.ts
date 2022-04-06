@@ -113,7 +113,7 @@ function state<Props = {}, State = undefined>(
   }
 
   /**
-   * Init static recuring
+   * Init static recuring store
    */
   const staticState = createStatic(GET_SELLECTOR_NULL<State, State>())
 
