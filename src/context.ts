@@ -14,6 +14,16 @@ import {
 import { compareFunc, compareOneLevelDeepFunc } from './compare'
 import { canUseDOM, GET_SELLECTOR_NULL, isDev } from './common'
 
+// Todo: test
+const isSelectorObjectCreatedOnFly = <Value, SelectedValue>(
+  selector: ContextSelector<Value, SelectedValue>
+) => {
+  const obj = {} as Value
+
+  // eslint-disable-next-line no-self-compare
+  return selector(obj) !== selector(obj)
+}
+
 const useIsomorphicLayoutEffect: typeof React.useEffect = canUseDOM()
   ? React.useLayoutEffect
   : React.useEffect
@@ -110,9 +120,11 @@ export function useContextSelector<Value, SelectedValue = Value>(
 
   const currentSelectedState = selector(currentState)
 
-  // eslint-disable-next-line no-self-compare
-  const isCreatedOnFly = currentSelectedState !== selector(currentState)
-  const isEqual = isCreatedOnFly ? compareOneLevelDeepFunc : compareFunc
+  const isObjCreatedOnFly = isSelectorObjectCreatedOnFly(selector)
+  const isEqualSelectedState = isObjCreatedOnFly
+    ? compareOneLevelDeepFunc
+    : compareFunc
+  const isEqualState = compareFunc
 
   const [[, cachedSelectedState], dispatch] = React.useReducer<
     ContextReducer<Value, SelectedValue>
@@ -139,7 +151,7 @@ export function useContextSelector<Value, SelectedValue = Value>(
 
       // Update from provider props
       if (nextVersion <= version) {
-        if (isEqual(prevSelectedState, currentSelectedState)) {
+        if (isEqualSelectedState(prevSelectedState, currentSelectedState)) {
           return doNotUpdate
         }
 
@@ -148,13 +160,13 @@ export function useContextSelector<Value, SelectedValue = Value>(
 
       // Update from state-hook update
       try {
-        if (isEqual(prevState, nextState)) {
+        if (isEqualState(prevState, nextState)) {
           return doNotUpdate
         }
 
         const nextSelectedState = selector(nextState)
 
-        if (isEqual(prevSelectedState, nextSelectedState)) {
+        if (isEqualSelectedState(prevSelectedState, nextSelectedState)) {
           return doNotUpdate
         }
 
@@ -172,7 +184,8 @@ export function useContextSelector<Value, SelectedValue = Value>(
     [currentState, currentSelectedState] as const
   )
 
-  if (!isEqual(cachedSelectedState, currentSelectedState)) {
+  // Update during component with hook rerender
+  if (!isEqualSelectedState(cachedSelectedState, currentSelectedState)) {
     // schedule re-render
     // this is safe because it's self contained
     dispatch(undefined)
