@@ -76,7 +76,7 @@ const { alice, bob } = useStore(
 > NOTE: **Values** in objects and arrays created on the fly are shallow compared.
 
 ## Static store
-The third element of the `state()` result tuple is `store` object. Store is static helper which provides access to the store **without hook**.
+The third element of the `state()` result tuple is `store` object. Store is static helper which provides access to the state **without hook**.
 
 ```jsx
 const [Provider, useStore, store] = state(...)
