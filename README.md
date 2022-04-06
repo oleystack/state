@@ -35,7 +35,7 @@ import { state } from '@bit-about/state'
 // 1️⃣ Create your hook-like store
 const [Provider, useStore] = state(
   () => {
-    const [alice, setAlice] = React.useState("Alice")
+    const [alice, setAlice] = React.useState('Alice')
     return { alice, setAlice }
   }
 )
