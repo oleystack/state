@@ -179,7 +179,7 @@ export function useContextSelector<Value, SelectedValue = Value>(
       }
 
       // Edge Case - Force update (create new array with old values)
-      return [prevState[0], prevState[1]] as const
+      return [prevState, prevSelectedState] as const
     },
     [currentState, currentSelectedState] as const
   )
