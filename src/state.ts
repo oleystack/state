@@ -81,14 +81,13 @@ function state<Props = {}, State = undefined>(
         current: cache.state !== undefined ? selector(cache.state) : undefined
       }
 
+      const isEqual = isSelectorObjectCreatedOnFly(selector)
+        ? compareOneLevelDeepFunc
+        : compareFunc
+
       const subscriber: ContextListener<State> = (payload) => {
         const [, nextState] = payload
-
-        const isObjCreatedOnFly = isSelectorObjectCreatedOnFly(selector)
         const nextSelectedState = selector(nextState)
-        const isEqual = isObjCreatedOnFly
-          ? compareOneLevelDeepFunc
-          : compareFunc
 
         if (!isEqual(subscriberCache.current, nextSelectedState)) {
           subscriberCache.current = nextSelectedState

@@ -106,9 +106,7 @@ export function useContextSelector<Value, SelectedValue>(
   }
 
   const currentSelectedState = selector(currentState)
-
-  const isObjCreatedOnFly = isSelectorObjectCreatedOnFly(selector)
-  const isEqualSelectedState = isObjCreatedOnFly
+  const isEqualSelectedState = isSelectorObjectCreatedOnFly(selector)
     ? compareOneLevelDeepFunc
     : compareFunc
   const isEqualState = compareFunc

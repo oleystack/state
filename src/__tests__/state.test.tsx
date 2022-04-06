@@ -819,7 +819,10 @@ test('Store static subscribe', () => {
   const { getByRole } = render(<App />)
 
   const listener = jest.fn()
-  const subscriber = store.select((state) => state.alice).subscribe(listener)
+  const subscriber = store
+    .select((state) => state.alice)
+    .select((state) => state)
+    .subscribe(listener)
   expect(listener).toBeCalledTimes(0)
 
   expect(getByRole('alice').textContent).toEqual('0')
