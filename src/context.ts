@@ -46,11 +46,9 @@ const createProvider = <Value>(
       versionRef.current += 1
 
       runWithPriority(NormalPriority, () => {
-        ;(contextValue.current as ContextValue<Value>).listeners.forEach(
-          (listener) => {
-            listener([versionRef.current, props.value])
-          }
-        )
+        contextValue.current!.listeners.forEach((listener) => {
+          listener([versionRef.current, props.value])
+        })
       })
     }, [props.value])
 
@@ -170,7 +168,6 @@ export function useContextSelector<Value, SelectedValue>(
       }
 
       // Edge Case - Force update (create new array with old values)
-      /* istanbul ignore next */
       return [cachedState, cachedSelectedState] as const
     },
     [currentState, currentSelectedState] as const
