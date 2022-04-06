@@ -21,6 +21,7 @@ npm install --save @bit-about/state
 - 100% Typescript with state types deduction
 - Efficient **sub-states selectors**
 - State on hook
+- ...with static access
 - No centralized state provider
 - Tiny - only **100KB**
 - **Just works** ™
