@@ -125,7 +125,7 @@ const subscriber = store
 subscriber.unsubscriber()
 ```
 
-> NOTE: It's not necessary to fetch state via static `store` inside of Provider - but it still needs to be placed somewhere to init the state.
+> NOTE: It's not necessary to fetch state inside of the Provider - but it still needs to be placed somewhere to init the state.
 
 ## State props
 The state hook allows you to pass any arguments into the context. It can be some initial state or you can even return it and pass it through to the components. Any state props change will update the context and trigger components rerendering **when necessary**.
