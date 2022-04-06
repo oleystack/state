@@ -122,31 +122,6 @@ const App = () => (
 )
 ```
 
-## BitAboutState 💛 [React Query](https://github.com/tannerlinsley/react-query)
-
-```tsx
-import { useQuery } from 'react-query'
-import { fetchUser } from './user.ts'
-
-type UserProfileHookProps = { id: number }
-
-const [Provider, useUser] = state(
-  ({ id }: UserProfileHookProps) => {
-    const { data: user } = useQuery(['user', id], () => fetchUser(id))
-    return { user }
-  }
-)
-
-const UserProfile = ({ id }) => (
-  <Provider id={id}>
-    ...
-  </Provider>
-)
-
-// 🧠 Rerender ONLY when user changed (no matter if isLoading changes)
-const avatar = useUser(state => state.user.avatar)
-```
-
 ## BitAboutState 💛 [BitAboutEvent](https://github.com/bit-about/event)
 Are you tired of sending logic to the related components?<br />
 Move your bussiness logic to the hook-based state using `@bit-about/state` + `@bit-about/event`.<br />
@@ -170,6 +145,31 @@ const [AuthProvider, useAuth] = state(
     return { user }
   }
 )
+```
+
+## BitAboutState 💛 [React Query](https://github.com/tannerlinsley/react-query)
+
+```tsx
+import { useQuery } from 'react-query'
+import { fetchUser } from './user.ts'
+
+type UserProfileHookProps = { id: number }
+
+const [Provider, useUser] = state(
+  ({ id }: UserProfileHookProps) => {
+    const { data: user } = useQuery(['user', id], () => fetchUser(id))
+    return { user }
+  }
+)
+
+const UserProfile = ({ id }) => (
+  <Provider id={id}>
+    ...
+  </Provider>
+)
+
+// 🧠 Rerender ONLY when user changed (no matter if isLoading changes)
+const avatar = useUser(state => state.user.avatar)
 ```
 
 ## Partners  
