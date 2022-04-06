@@ -75,27 +75,6 @@ const { alice, bob } = useStore(
 
 > NOTE: **Values** in objects and arrays created on the fly are shallow compared.
 
-### 👉 Functions in state
-Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they rerender themselves.
-
-```jsx
-const [Provider, useStore] = state(
-  () => {
-    const [counter, setCounter] = React.useState(0);
-   
-    // ✖️ It will rerender components every time
-    // const incrementCounter = () => setCounter(value => value + 1)
-
-    const incrementCounter = React.useCallback(
-      () => setCounter(value => value + 1),
-      [setCounter]
-    )
-
-    return {counter, incrementCounter}
-  }
-)
-```
-
 ## Static store
 The third element of the `state()` result tuple is `store` object. Store is static helper which provides access to the store **without hook**.
 
@@ -141,6 +120,27 @@ const App = () => (
   <Provider alice="Alice" bob="Bob">
     ...
   </Provider>
+)
+```
+
+## 👉 Functions in state
+Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they rerender themselves.
+
+```jsx
+const [Provider, useStore] = state(
+  () => {
+    const [counter, setCounter] = React.useState(0);
+   
+    // ✖️ It will rerender components every time
+    // const incrementCounter = () => setCounter(value => value + 1)
+
+    const incrementCounter = React.useCallback(
+      () => setCounter(value => value + 1),
+      [setCounter]
+    )
+
+    return {counter, incrementCounter}
+  }
 )
 ```
 
