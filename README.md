@@ -130,10 +130,10 @@ Now you've got **completely type-safe side-effects**, isn't cool?
 
 ```tsx
 import { state } from '@bit-about/state'
-import { useEvent } from './user-events' // Hook generated from events()
+import { useEvent } from './auth-events' // Hook generated from events()
 import User from '../models/user'
 
-const [AuthProvider, useAuth] = state(
+const [UserProvider, useUser] = state(
   () => {
     const [user, setUser] = React.useState<User | null>(null)
     
@@ -142,7 +142,7 @@ const [AuthProvider, useAuth] = state(
       userLoggout: () => setUser(null)
     })
     
-    return { user }
+    return user
   }
 )
 ```
