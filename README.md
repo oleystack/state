@@ -172,7 +172,7 @@ import { fetchUser } from './user'
 const [UserProvider, useUser] = state(
   ({ id }) => {
     const { data: user } = useQuery(['user', id], () => fetchUser(id))
-    return { user }
+    return user
   }
 )
 
