@@ -23,7 +23,7 @@ npm install --save @bit-about/state
 - State on hook
 - ...with static access
 - No centralized state provider
-- Tiny - only **100KB**
+- Tiny - only **2.6kB**
 - **Just works** ™
 
 ## Usage
