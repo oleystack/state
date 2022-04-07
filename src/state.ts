@@ -2,13 +2,30 @@ import * as React from 'react'
 import { GET_SELLECTOR_NULL, isSelectorObjectCreatedOnFly } from './common'
 import { compareFunc, compareOneLevelDeepFunc } from './compare'
 import { createContext, useContextSelector } from './context'
-import {
-  ContextListener,
-  StateSelector,
-  Provider,
-  StateTuple,
-  StateStore
-} from './types'
+import { ContextListener, StateSelector } from './types'
+
+type StateSelectorHook<State> = (<SelectedState>(
+  selector: StateSelector<State, SelectedState>
+) => Readonly<SelectedState>) &
+  (() => Readonly<State>)
+
+type StateSubscriber<State> = (listener: (state: State) => void) => {
+  unsubscribe: () => void
+}
+
+type StateStore<State> = {
+  get: () => State | undefined
+  select: <SelectedState>(
+    selector: StateSelector<State, SelectedState>
+  ) => StateStore<SelectedState>
+  subscribe: StateSubscriber<State>
+}
+
+type StateTuple<Props, State> = [
+  React.FC<Props>,
+  StateSelectorHook<State>,
+  StateStore<State>
+]
 
 function state<Props = {}, State = undefined>(
   useValue: (props: Props) => State
@@ -26,7 +43,7 @@ function state<Props = {}, State = undefined>(
    * State Provider
    * @returns React.FC
    */
-  const StateProvider: Provider<Props> = ({ children, ...props }) => {
+  const StateProvider: React.FC<Props> = ({ children, ...props }) => {
     const value = useValue(props as Props)
     cache.state = value
 

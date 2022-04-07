@@ -3,16 +3,31 @@ import {
   unstable_NormalPriority as NormalPriority,
   unstable_runWithPriority as runWithPriority
 } from 'scheduler'
-import {
-  Context,
-  ContextListener,
-  ContextReducer,
-  StateSelector,
-  ContextValue,
-  ContextVersion
-} from './types'
+import { ContextListener, StateSelector, ContextVersion } from './types'
 import { compareFunc, compareOneLevelDeepFunc } from './compare'
 import { canUseDOM, isDev, isSelectorObjectCreatedOnFly } from './common'
+
+type Context<Value> = React.Context<Value> & {
+  Provider: React.FC<React.ProviderProps<Value>>
+  // We don't support Consumer API
+  Consumer: never
+}
+
+type ContextValue<Value> = {
+  /** Holds a set of subscribers from components. */
+  listeners: ContextListener<Value>[]
+
+  /** Holds an actual value of React's context that will be propagated down for computations. */
+  value: React.MutableRefObject<Value>
+
+  /** A version field is used to sync a context value and consumers. */
+  version: React.MutableRefObject<ContextVersion>
+}
+
+type ContextReducer<Value, SelectedValue> = React.Reducer<
+  readonly [Value, SelectedValue],
+  undefined | readonly [ContextVersion, Value]
+>
 
 /* istanbul ignore next */
 const useIsomorphicLayoutEffect: typeof React.useEffect = canUseDOM()
