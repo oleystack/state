@@ -40,6 +40,8 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
+      - name: Update package.json version on release
+        uses: medallyon/update-package-version-on-release@v1
       - run: npm ci
       - run: npm publish --access=public
         env:
