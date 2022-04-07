@@ -125,7 +125,7 @@ const UserProfile = ({ id }) => (
 Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they rerender themselves.
 
 ```jsx
-const [UserProvider, useStore] = state(
+const [Provider, useStore] = state(
   () => {
     const [counter, setCounter] = React.useState(0);
    
@@ -137,7 +137,7 @@ const [UserProvider, useStore] = state(
       [setCounter]
     )
 
-    return {counter, incrementCounter}
+    return { counter, incrementCounter }
   }
 )
 ```
