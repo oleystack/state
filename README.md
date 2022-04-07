@@ -8,7 +8,7 @@
 ## Install
 
 ```bash
-npm install --save @bit-about/state
+npm i @bit-about/state
 ```
 
 ## Features
