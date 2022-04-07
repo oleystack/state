@@ -2,7 +2,7 @@
 <img alt="" src="https://user-images.githubusercontent.com/1496580/162103874-f2fbde4b-f985-4c33-ac38-9d5d3b4ee37e.png" /><br/><br/>
 <a href="https://www.npmjs.com/package/@bit-about/state"><img alt="" src="https://img.shields.io/npm/v/@bit-about/state.svg" /></a>
 <img alt="Bundle size" src="https://img.shields.io/bundlephobia/min/@bit-about/state?label=size" />
-<a href="https://codecov.io/gh/bit-about/state"><img alt="" src="https://codecov.io/gh/bit-about/state/branch/main/graph/badge.svg?token=BuGi92VqnL" /></a>
+<a href="https://codecov.io/gh/bit-about/state"><img alt="" src="https://img.shields.io/codecov/c/github/bit-about/state?token=BuGi92VqnL" />
 </p>
 
 ## Install
@@ -167,12 +167,10 @@ const [UserProvider, useUser] = state(
 
 ```tsx
 import { useQuery } from 'react-query'
-import { fetchUser } from './user.ts'
-
-type UserProfileHookProps = { id: number }
+import { fetchUser } from './user'
 
 const [UserProvider, useUser] = state(
-  ({ id }: UserProfileHookProps) => {
+  ({ id }) => {
     const { data: user } = useQuery(['user', id], () => fetchUser(id))
     return { user }
   }
