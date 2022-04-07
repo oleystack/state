@@ -108,16 +108,16 @@ The state hook allows you to pass any arguments into the context. It can be some
 
 ```tsx
 const [UserProvider, useUser] = state(
-  ({ userId }) => {
-    const [user] = React.useState(() => getMyUser(userId))
+  ({ id }) => {
+    const [user] = React.useState(() => getMyUserBy(id))
     return user
   }
 )
 
-const UserProfile = ({ userId }) => (
-  <Provider userId={userId}>
+const UserProfile = ({ id }) => (
+  <UserProvider id={id}>
     ...
-  </Provider>
+  </UserProvider>
 )
 ```
 
@@ -125,7 +125,7 @@ const UserProfile = ({ userId }) => (
 Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they rerender themselves.
 
 ```jsx
-const [Provider, useStore] = state(
+const [UserProvider, useStore] = state(
   () => {
     const [counter, setCounter] = React.useState(0);
    
@@ -175,7 +175,7 @@ import { fetchUser } from './user.ts'
 
 type UserProfileHookProps = { id: number }
 
-const [Provider, useUser] = state(
+const [UserProvider, useUser] = state(
   ({ id }: UserProfileHookProps) => {
     const { data: user } = useQuery(['user', id], () => fetchUser(id))
     return { user }
@@ -183,9 +183,9 @@ const [Provider, useUser] = state(
 )
 
 const UserProfile = ({ id }) => (
-  <Provider id={id}>
+  <UserProvider id={id}>
     ...
-  </Provider>
+  </UserProvider>
 )
 
 // 🧠 Rerender ONLY when user changed (no matter if isLoading changes)
