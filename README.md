@@ -107,19 +107,17 @@ subscriber.unsubscribe()
 The state hook allows you to pass any arguments into the context. It can be some initial state or you can even return it and pass it through to the components. Any state props change will update the context and trigger components rerendering **when necessary**.
 
 ```tsx
-type HookProps = { alice: string, bob: string }
-
-const [Provider, useStore] = state(
-  (props: HookProps) => {
-    const [alice, setAlice] = React.useState(props.alice)
-    return { alice, setAlice, bob: props.bob }
+const [UserProvider, useUser] = state(
+  ({ id }) => {
+    const [user] = React.useState(() => getMyUserBy(id))
+    return user
   }
 )
 
-const App = () => (
-  <Provider alice="Alice" bob="Bob">
+const UserProfile = ({ id }) => (
+  <UserProvider id={id}>
     ...
-  </Provider>
+  </UserProvider>
 )
 ```
 
@@ -139,7 +137,7 @@ const [Provider, useStore] = state(
       [setCounter]
     )
 
-    return {counter, incrementCounter}
+    return { counter, incrementCounter }
   }
 )
 ```
@@ -177,7 +175,7 @@ import { fetchUser } from './user.ts'
 
 type UserProfileHookProps = { id: number }
 
-const [Provider, useUser] = state(
+const [UserProvider, useUser] = state(
   ({ id }: UserProfileHookProps) => {
     const { data: user } = useQuery(['user', id], () => fetchUser(id))
     return { user }
@@ -185,9 +183,9 @@ const [Provider, useUser] = state(
 )
 
 const UserProfile = ({ id }) => (
-  <Provider id={id}>
+  <UserProvider id={id}>
     ...
-  </Provider>
+  </UserProvider>
 )
 
 // 🧠 Rerender ONLY when user changed (no matter if isLoading changes)
