@@ -1,18 +1,14 @@
-# <p align="center">BitAboutState</p>
 <p align="center">
-<img alt="" src="https://user-images.githubusercontent.com/1496580/160495578-c4a54e53-7c5f-4bc3-9db3-a45c6ed45394.png" /><br/>
+<img alt="" src="https://user-images.githubusercontent.com/1496580/162103874-f2fbde4b-f985-4c33-ac38-9d5d3b4ee37e.png" /><br/><br/>
 <a href="https://www.npmjs.com/package/@bit-about/state"><img alt="" src="https://img.shields.io/npm/v/@bit-about/state.svg" /></a>
 <img alt="Bundle size" src="https://img.shields.io/bundlephobia/min/@bit-about/state?label=size" />
-<a href="https://codecov.io/gh/bit-about/state"><img alt="" src="https://codecov.io/gh/bit-about/state/branch/main/graph/badge.svg?token=BuGi92VqnL" /></a>
-<br />
-🚀 Tiny and powerful React hook-based state management library.<br />
-100% Idiomatic React.<br />
+<a href="https://codecov.io/gh/bit-about/state"><img alt="" src="https://img.shields.io/codecov/c/github/bit-about/state?token=BuGi92VqnL" />
 </p>
 
 ## Install
 
 ```bash
-npm install --save @bit-about/state
+npm i @bit-about/state
 ```
 
 ## Features
@@ -23,7 +19,7 @@ npm install --save @bit-about/state
 - State on hook
 - ...with static access
 - No centralized state provider
-- Tiny - only **100KB**
+- Tiny - only **2.6kB**
 - **Just works** ™
 
 ## Usage
@@ -171,12 +167,10 @@ const [UserProvider, useUser] = state(
 
 ```tsx
 import { useQuery } from 'react-query'
-import { fetchUser } from './user.ts'
-
-type UserProfileHookProps = { id: number }
+import { fetchUser } from './user'
 
 const [UserProvider, useUser] = state(
-  ({ id }: UserProfileHookProps) => {
+  ({ id }) => {
     const { data: user } = useQuery(['user', id], () => fetchUser(id))
     return { user }
   }
