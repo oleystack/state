@@ -103,7 +103,7 @@ subscriber.unsubscribe()
 
 ## State props
 
-The state hook allows you to pass any arguments into the context. It can be some initial state or you could even return it and pass it through to the components via props. All state prop changes will update the context and trigger component re-rendering **only when necessary**.
+The state hook allows you to pass any arguments into the context. It can be some initial state or you could even return it and pass it through to the components. All state prop changes will update the context and trigger component re-rendering **only when necessary**.
 
 ```tsx
 const [UserProvider, useUser] = state(
