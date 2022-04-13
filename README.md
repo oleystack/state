@@ -16,8 +16,8 @@ npm i @bit-about/state
 - 100% **Idiomatic React**
 - 100% Typescript with state types deduction
 - Efficient **sub-states selectors**
-- State on hook
-- ...with static access
+- Get state from a hook...
+- ...or utilise static access
 - No centralized state provider
 - Tiny - only **2.6kB**
 - **Just works** ™
@@ -28,7 +28,7 @@ npm i @bit-about/state
 import * as React from 'react'
 import { state } from '@bit-about/state'
 
-// 1️⃣ Create your hook-like store
+// 1️⃣ Create a hook-based store
 const [Provider, useStore] = state(
   () => {
     const [alice, setAlice] = React.useState('Alice')
@@ -42,7 +42,7 @@ const Child = () => {
   return <p>{alice}</p>
 }
 
-// 2️⃣ Wrap the tree with the Provider
+// 2️⃣ Wrap tree with Provider
 const App = () => (
   <Provider>
     <Child />
@@ -51,16 +51,17 @@ const App = () => (
 ```
 
 ## State selectors
-Choose your own way to select state and rerender component **only when necessary**.
+
+Access fine-grained control to the specific part of your state to re-render **only when necessary**.
 
 ```jsx
-// 👍 Rerender when anything changed
+// 👍 Re-render when anything changed
 const { alice, bob } = useStore()
 
-// 💪 Rerender when alice changed
+// 💪 Re-render when alice changed
 const alice = useStore(state => state.alice)
 
-// 🤌 Rerender when alice or bob changed
+// 🤌 Re-render when alice or bob changed
 const [alice, bob] = useStore(state => [state.alice, state.bob])
 
 // or
@@ -72,7 +73,8 @@ const { alice, bob } = useStore(
 > NOTE: **Values** in objects and arrays created on the fly are shallow compared.
 
 ## Static store
-The third element of the `state()` result tuple is `store` object. Store is static helper which provides access to the state **without hook**.
+
+The third element of the `state()` result tuple is a `store` object. Store is a static helper which provides access to the state **without a hook**.
 
 ```jsx
 const [Provider, useStore, store] = state(...)
@@ -88,7 +90,7 @@ const alice = store
   .select(state => state.alice)
   .get()
 
-// 🤌 Subscribe store and listen on changes
+// 🤌 Subscribe to the store and listen for changes
 const subscriber = store
   .select(state => state.alice)
   .subscribe(alice => console.log(alice))
@@ -97,10 +99,11 @@ const subscriber = store
 subscriber.unsubscribe()
 ```
 
-> NOTE: It's not necessary to fetch state inside of the Provider - but it still needs to be placed somewhere to init the state.
+> NOTE: It's not necessary to fetch state inside the Provider - but it still needs to be placed somewhere to init the state.
 
 ## State props
-The state hook allows you to pass any arguments into the context. It can be some initial state or you can even return it and pass it through to the components. Any state props change will update the context and trigger components rerendering **when necessary**.
+
+The state hook allows you to pass any arguments into the context. It can be some initial state or you could even return it and pass it through to the components. All state prop changes will update the context and trigger component re-rendering **only when necessary**.
 
 ```tsx
 const [UserProvider, useUser] = state(
@@ -118,14 +121,15 @@ const UserProfile = ({ id }) => (
 ```
 
 ## 👉 Functions in state
-Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they rerender themselves.
+
+Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they re-render themselves.
 
 ```jsx
 const [Provider, useStore] = state(
   () => {
     const [counter, setCounter] = React.useState(0);
    
-    // ✖️ It will rerender components every time
+    // ✖️ It will re-render components every time
     // const incrementCounter = () => setCounter(value => value + 1)
 
     const incrementCounter = React.useCallback(
@@ -139,10 +143,11 @@ const [Provider, useStore] = state(
 ```
 
 ## BitAboutState 💛 [BitAboutEvent](https://github.com/bit-about/event)
+
 Are you tired of sending logic to the related components?<br />
 Move your bussiness logic to the hook-based state using `@bit-about/state` + `@bit-about/event`.<br />
 
-Now you've got **completely type-safe side-effects**, isn't cool?
+Now you've got **completely type-safe side-effects**. Isn't that cool?
 
 ```tsx
 import { state } from '@bit-about/state'
@@ -182,7 +187,7 @@ const UserProfile = ({ id }) => (
   </UserProvider>
 )
 
-// 🧠 Rerender ONLY when user changed (no matter if isLoading changes)
+// 🧠 Re-render ONLY when user avatar changed (no matter if isLoading changes)
 const avatar = useUser(state => state.user.avatar)
 ```
 
@@ -191,7 +196,7 @@ const avatar = useUser(state => state.user.avatar)
 
 ## Credits
 - [Constate](https://github.com/diegohaz/constate) - approach main inspiration
-- [use-context-selector](https://github.com/dai-shi/use-context-selector) & [FluentUI](https://github.com/microsoft/fluentui) - fancy rerender avoiding tricks and code main inspiration
+- [use-context-selector](https://github.com/dai-shi/use-context-selector) & [FluentUI](https://github.com/microsoft/fluentui) - fancy re-render avoiding tricks and code main inspiration
 
 ## License
 MIT © [Maciej Olejnik 🇵🇱](https://github.com/Gareneye)
