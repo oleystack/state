@@ -28,7 +28,7 @@ npm i @bit-about/state
 import * as React from 'react'
 import { state } from '@bit-about/state'
 
-// 1️⃣ Create a hook-like store
+// 1️⃣ Create a hook-based store
 const [Provider, useStore] = state(
   () => {
     const [alice, setAlice] = React.useState('Alice')
