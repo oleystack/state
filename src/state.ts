@@ -6,8 +6,8 @@ import { ContextListener, StateSelector } from './types'
 
 type StateSelectorHook<State> = (<SelectedState>(
   selector: StateSelector<State, SelectedState>
-) => Readonly<SelectedState>) &
-  (() => Readonly<State>)
+) => SelectedState) &
+  (() => State)
 
 type StateSubscriber<State> = (listener: (state: State) => void) => {
   unsubscribe: () => void
