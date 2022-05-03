@@ -86,11 +86,20 @@ const Bob = () => {
  * App
  */
 const App = () => {
+  const [initAlice, setInitAlice] = useState(0)
+  const [, setInitBob] = useState(0)
+
   return (
-    <TestProvider alice={3}>
+    <TestProvider alice={initAlice}>
       <Alice />
       <Buttons />
       <Bob />
+      <button onClick={() => setInitAlice((value) => value + 1)}>
+        setInitAlice
+      </button>
+      <button onClick={() => setInitBob((value) => value + 1)}>
+        setInitBob
+      </button>
     </TestProvider>
   )
 }

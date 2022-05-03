@@ -2,6 +2,7 @@ import * as React from 'react'
 import { GET_SELLECTOR_NULL, isSelectorObjectCreatedOnFly } from './common'
 import { compareFunc, compareOneLevelDeepFunc } from './compare'
 import { createContext, useContextSelector } from './context'
+import { useDevTools } from './devtools'
 import { ContextListener, StateSelector } from './types'
 
 type StateSelectorHook<State> = (<SelectedState>(
@@ -44,7 +45,7 @@ function state<Props = {}, State = undefined>(
    * @returns React.FC
    */
   const StateProvider: React.FC<Props> = ({ children, ...props }) => {
-    const value = useValue(props as Props)
+    const value = useDevTools(useValue, props as Props)
     cache.state = value
 
     return React.createElement(context.Provider, { value }, children)
