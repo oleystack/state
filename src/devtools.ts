@@ -1,6 +1,13 @@
 /* istanbul ignore file */
 
-import { createContext, useContext, useEffect, useRef, useState } from 'react'
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
 import type {} from '@redux-devtools/extension'
 import { compareOneLevelDeepFunc } from './compare'
 
@@ -50,10 +57,7 @@ interface DevTools<State> {
   init: (state: State) => void
   send: (action: Action, state: State) => void
   subscribe: (
-    listener: (message: {
-      type: string
-      payload: { type: string; actionId: number }
-    }) => void
+    listener: (message: { type: string; payload: any }) => void
   ) => (() => void) | undefined
 }
 
@@ -74,14 +78,14 @@ export const useSideEffect = <Arguments extends any[], ReturnType>(
 ) => {
   const { actionsQueue } = useContext(DevToolsContext)
 
-  return (...args: Arguments): ReturnType => {
+  return useCallback((...args: Arguments): ReturnType => {
     actionsQueue.current.push({
       type: `ACTION/${id}`,
       payload: args
     })
 
     return fn(...args)
-  }
+  }, [])
 }
 
 export const useStoreName = (name: string) => {
@@ -175,7 +179,47 @@ export const useDevTools = <State, Props>(
               break
 
             case 'IMPORT_STATE':
-              // todo
+              const {
+                nextLiftedState: {
+                  actionsById: actions = {},
+                  computedStates: states = []
+                }
+              } = message.payload
+
+              devTools.current?.init(states[0].state)
+
+              const entries = Object.entries(actions) as Array<
+                [string, { action: Action }]
+              >
+
+              entries.slice(1).forEach(([id, { action }]) => {
+                devTools.current?.send(action, states[id].state)
+              })
+
+              archive.current = entries.reduce(
+                (acc, [id]) => ({
+                  ...acc,
+                  [id]: {
+                    state: {
+                      ...lastEntry.state,
+                      ...states[id].state
+                    },
+                    props // Props here are not so imporant (are only necessary for comparasion to detect parent's props changes)
+                  }
+                }),
+                {}
+              )
+
+              const lastActionId = Object.keys(archive.current)
+                .map(Number)
+                .sort((a, b) => b - a)[0]
+
+              actionsQueue.current = [
+                {
+                  type: '@@RESET'
+                }
+              ]
+              setActiveActionId({ current: lastActionId })
               break
 
             case 'REORDER_ACTION':
