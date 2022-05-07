@@ -20,6 +20,11 @@ interface ActionParentPropsUpdate<Props = unknown> {
   props: Props
 }
 
+interface ActionSetState<State = unknown> {
+  type: 'SET_STATE'
+  state: State
+}
+
 interface ActionCall<Payload = unknown> {
   type: 'ACTION' | `ACTION/${string}`
   payload: Payload
@@ -37,12 +42,13 @@ interface ActionReset {
   type: '@@RESET'
 }
 
-type Action =
+type Action<State = unknown> =
   | ActionParentPropsUpdate
   | ActionCall
   | ActionSideEffect
   | ActionJump
   | ActionReset
+  | ActionSetState<State>
 
 type ActionArchiveEntry<State, Props> = {
   state: State
@@ -53,17 +59,17 @@ type ActionArchiveEntry<State, Props> = {
  * Context
  */
 
-interface DevTools<State> {
+interface DevTools<State = unknown> {
   init: (state: State) => void
-  send: (action: Action, state: State) => void
+  send: (action: Action<State>, state: State) => void
   subscribe: (
     listener: (message: { type: string; payload: any }) => void
   ) => (() => void) | undefined
 }
 
-interface DevToolsContextValue {
+interface DevToolsContextValue<State = unknown> {
   name: { current: string }
-  actionsQueue: { current: Action[] }
+  actionsQueue: { current: Action<State>[] }
 }
 export const devToolsDefaultValue: DevToolsContextValue = {
   name: { current: '@bit-about/state' },
@@ -116,7 +122,7 @@ export const useDevTools = <State, Props>(
   const {
     name: { current: name },
     actionsQueue
-  } = useContext(DevToolsContext)
+  } = useContext(DevToolsContext as React.Context<DevToolsContextValue<State>>)
   const [activeActionId, setActiveActionId] = useState({
     current: 0
   })
@@ -143,13 +149,50 @@ export const useDevTools = <State, Props>(
       console.log(message)
       switch (message.type) {
         case 'ACTION':
-          if (typeof message.payload !== 'string') {
+          const showError = () => {
             console.error(
-              '[@bit-about/state devtools] Unsupported action format'
+              '[@bit-about/state devtools] Unsupported action format.'
+            )
+            console.warn(
+              '[@bit-about/state devtools] Available commands: ',
+              '1. Setting state { type: "SET_STATE", state: {...} }',
+              '2. Calling state action { type: "ACTION/yourAction", payload: [] }'
             )
           }
 
-          // Todo parse
+          if (typeof message.payload !== 'string') {
+            showError()
+          }
+
+          try {
+            const {
+              type,
+              state = {},
+              payload = []
+            }: { type: string; state: any; payload: any[] } = JSON.parse(
+              message.payload
+            )
+
+            if (type.startsWith('ACTION/')) {
+              const [, id] = type.split('/')
+              state[id](payload)
+
+              actionsQueue.current.push({
+                type: `ACTION/${id}`,
+                payload: payload
+              })
+            }
+
+            if (type === 'SET_STATE') {
+              actionsQueue.current.push({
+                type: `SET_STATE`,
+                state
+              })
+            }
+          } catch (e) {
+            showError()
+          }
+
           break
 
         case 'DISPATCH':
@@ -193,7 +236,10 @@ export const useDevTools = <State, Props>(
               >
 
               entries.slice(1).forEach(([id, { action }]) => {
-                devTools.current?.send(action, states[id].state)
+                devTools.current?.send(
+                  action as Action<State>,
+                  states[id].state
+                )
               })
 
               archive.current = entries.reduce(
@@ -201,10 +247,12 @@ export const useDevTools = <State, Props>(
                   ...acc,
                   [id]: {
                     state: {
-                      ...lastEntry.state,
+                      ...lastEntry.state, // Functions cannot be resolved from json, so it's workaround
                       ...states[id].state
                     },
-                    props // Props here are not so imporant (are only necessary for comparasion to detect parent's props changes)
+                    // Props here are not so imporant
+                    // (are only necessary for comparasion to detect parent's props changes)
+                    props
                   }
                 }),
                 {}
@@ -279,7 +327,11 @@ export const useDevTools = <State, Props>(
     }
 
     devTools.current?.send(action, state)
-    archive.current[lastActionId + 1] = { state, props }
+    if (action.type === 'SET_STATE') {
+      archive.current[lastActionId + 1] = { state: action.state, props }
+    } else {
+      archive.current[lastActionId + 1] = { state, props }
+    }
     actionsQueue.current.shift()
 
     // Moving to the newest one
