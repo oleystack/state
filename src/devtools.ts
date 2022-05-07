@@ -1,206 +1,205 @@
-import { useEffect, useRef, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import type {} from '@redux-devtools/extension'
 import { compareOneLevelDeepFunc } from './compare'
 
-interface Action<State, Props, Payload = unknown> {
-  type: string
-  payload?: Payload
-  state?: State
-  props?: Props
+/**
+ * DevTools types
+ */
+
+interface ActionParentPropsUpdate<Props = unknown> {
+  type: 'PARENT_PROPS_UPDATE'
+  props: Props
 }
 
-type Entry<Props, State> = { props: Props; state: State }
+interface ActionCall<Payload = unknown> {
+  type: 'ACTION' | `ACTION/${string}`
+  payload: Payload
+}
 
-interface DevTools<State = unknown, Props = unknown> {
+interface ActionSideEffect {
+  type: 'SIDE_EFFECT' | `SIDE_EFFECT/${string}`
+}
+
+type Action = ActionParentPropsUpdate | ActionCall | ActionSideEffect
+
+type ActionArchiveEntry<State, Props> = { state: State; props: Props }
+
+/**
+ * Context
+ */
+
+interface DevTools<State = unknown> {
   init: (state: State) => void
-  send: (action: Action<State, Props>, state: State) => void
+  send: (action: Action, state: State) => void
   subscribe: (
     listener: (
-      message: Action<State, Props, { type: string; actionId: number }>
+      message: Action & { payload: { type: string; actionId: number } }
     ) => void
   ) => (() => void) | undefined
 }
 
-const toReadable = (arg: unknown) => {
-  if (typeof arg === 'function') {
-    return `@FUNCTION`
-  }
+interface DevToolsContextValue {
+  name: string
+  actionsQueue: { current: Action[] }
+}
+export const devToolsDefaultValue: DevToolsContextValue = {
+  name: '@bit-about/state',
+  actionsQueue: { current: [] }
+}
+export const DevToolsContext =
+  createContext<DevToolsContextValue>(devToolsDefaultValue)
 
-  return arg
+export const useSideEffect = <Argument, ReturnType>(
+  fn: (...args: Argument[]) => ReturnType,
+  id: string
+) => {
+  const { actionsQueue } = useContext(DevToolsContext)
+
+  return (...args: Argument[]): ReturnType => {
+    const action: ActionCall = {
+      type: `ACTION/${id}`,
+      payload: args
+    }
+    actionsQueue.current.push(action)
+
+    return fn(...args)
+  }
 }
 
-const objToReadable = (obj: any) => {
-  if (Array.isArray(obj)) {
-    return obj.map((value) => toReadable(value))
-  }
-
-  return Object.entries(obj).reduce(
-    (acc, [key, value]) => ({ ...acc, [key]: toReadable(value) }),
-    {}
-  )
-}
-
-let devTools: DevTools | null = null
+/**
+ * useDevTools
+ */
 
 const areDevToolsEnabled =
   process.env.NODE_ENV === 'development' &&
   typeof window !== 'undefined' &&
   Boolean(window.__REDUX_DEVTOOLS_EXTENSION__)
 
-const startDevTools = () => {
-  devTools = window.__REDUX_DEVTOOLS_EXTENSION__?.connect({
-    name: '@bit-about/state'
-  }) as unknown as DevTools
-}
-
-// todo: multiple store
 export const useDevTools = <State, Props>(
-  useValue: (props: Props) => State,
+  state: State,
   props: Props
 ): State => {
-  const state = useValue(props)
   if (!areDevToolsEnabled) {
     return state
   }
 
-  const isRecording = useRef<boolean>(true)
-  const [activeActionId, setActiveActionId] = useState<{ current: number }>({
+  // const isMounted = useRef<boolean>(false)
+  const devTools = useRef<DevTools>()
+  // const isRecording = useRef<boolean>(true)
+  const { name, actionsQueue } = useContext(DevToolsContext)
+
+  const [activeActionId] = useState({
     current: 0
   })
-  const lastActionId = useRef<number>(0)
-  const lastAction = useRef<Action<State, Props>>()
-
-  const archive = useRef<Record<number, Entry<Props, State>>>({
-    0: { props, state }
+  const archive = useRef<Record<number, ActionArchiveEntry<State, Props>>>({
+    0: { state, props } // @@INIT
   })
 
-  const lastEntry = archive.current[lastActionId.current]
-  const isLastEntry = activeActionId.current === lastActionId.current
+  const lastActionId = Object.keys(archive.current)
+    .map(Number)
+    .sort()
+    .reverse()[0]
+  const lastEntry = archive.current[lastActionId]
 
   useEffect(() => {
-    startDevTools()
-    devTools?.init(state)
+    devTools.current = window.__REDUX_DEVTOOLS_EXTENSION__?.connect({
+      name
+    }) as unknown as DevTools
 
-    const unsubscribe = devTools?.subscribe((action) => {
-      console.log(action)
-      switch (action.type) {
-        case 'ACTION':
-          if (typeof action.payload !== 'string') {
-            console.error(
-              '[@bit-about/state devtools] Unsupported action format'
-            )
-          }
+    devTools.current?.init(state)
 
-          // Todo parse
-          break
+    // const unsubscribe = devTools?.subscribe((action) => {
+    //   console.log(action)
+    //   switch (action.type) {
+    //     case 'ACTION':
+    //       if (typeof action.payload !== 'string') {
+    //         console.error(
+    //           '[@bit-about/state devtools] Unsupported action format'
+    //         )
+    //       }
 
-        case 'DISPATCH':
-          switch (action.payload?.type) {
-            case 'COMMIT':
-            case 'RESET':
-              devTools?.init(state)
-              archive.current = { 0: { state, props } }
-              lastActionId.current = 0
-              setActiveActionId({ current: 0 })
-              break
+    //       // Todo parse
+    //       break
 
-            case 'ROLLBACK':
-              // todo
-              break
+    //     case 'DISPATCH':
+    //       switch (action.payload?.type) {
+    //         case 'COMMIT':
+    //         case 'RESET':
+    //           devTools?.init(state)
+    //           archive.current = { 0: { state, props } }
+    //           lastActionId.current = 0
+    //           setActiveActionId({ current: 0 })
+    //           break
 
-            case 'JUMP_TO_STATE':
-            case 'JUMP_TO_ACTION':
-              setActiveActionId({ current: action.payload.actionId })
-              break
+    //         case 'ROLLBACK':
+    //           // todo
+    //           break
 
-            case 'IMPORT_STATE':
-              // todo
-              break
+    //         case 'JUMP_TO_STATE':
+    //         case 'JUMP_TO_ACTION':
+    //           setActiveActionId({ current: action.payload.actionId })
+    //           break
 
-            case 'PAUSE_RECORDING':
-              isRecording.current = !isRecording.current
-              break
-          }
-      }
-    })
+    //         case 'IMPORT_STATE':
+    //           // todo
+    //           break
 
-    return () => {
-      unsubscribe?.()
-    }
+    //         case 'PAUSE_RECORDING':
+    //           isRecording.current = !isRecording.current
+    //           break
+    //       }
+    //   }
+    // })
+
+    // return () => {
+    //   unsubscribe?.()
+    // }
   }, [])
 
-  const sendToDevTools = (
-    action: Action<State, Props>,
-    state: State,
-    entry: Entry<Props, State>
-  ) => {
-    devTools?.send(
-      {
-        ...action,
-        payload:
-          action.payload !== undefined
-            ? objToReadable(action.payload)
-            : undefined
-      },
-      objToReadable(state)
-    )
+  // Detecting parent props update
+  useEffect(() => {
+    if (!compareOneLevelDeepFunc(lastEntry.props, props)) {
+      const action: ActionParentPropsUpdate = {
+        type: 'PARENT_PROPS_UPDATE',
+        props
+      }
 
-    archive.current[++lastActionId.current] = entry
-
-    if (isLastEntry) {
-      activeActionId.current = lastActionId.current
+      actionsQueue.current.push(action)
     }
-  }
+  }, [props])
 
-  // Props updates
-  if (!compareOneLevelDeepFunc(lastEntry.props, props)) {
-    sendToDevTools(
-      { type: 'PARENT_PROPS_UPDATE', payload: props },
-      lastEntry.state,
-      {
-        props,
-        state: lastEntry.state
-      }
-    )
-  }
+  // Actions dispatcher
+  do {
+    const [firstAction] = actionsQueue.current
+    const action: Action =
+      firstAction ?? ({ type: 'SIDE_EFFECT' } as ActionSideEffect)
 
-  // State updates
-  if (!compareOneLevelDeepFunc(lastEntry.state, state)) {
-    sendToDevTools(
-      lastAction.current !== undefined
-        ? lastAction.current
-        : { type: 'SIDE_EFFECT' },
-      state,
-      {
-        props: lastEntry.props,
-        state
-      }
-    )
+    devTools.current?.send(action, state)
+    archive.current[lastActionId + 1] = { state, props }
+    actionsQueue.current.shift()
 
-    lastAction.current = undefined
-  }
+    // Moving to the newest one
+    activeActionId.current = lastActionId + 1
+  } while (actionsQueue.current.length)
 
-  const wrappFunction = (fn: Function, name?: string) => {
-    return (...args: unknown[]) => {
-      lastAction.current = {
-        type: name ? `CALL/${name}` : 'CALL',
-        payload: args.map(toReadable),
-        ...lastEntry
-      }
-      return fn(...args)
-    }
-  }
+  /**
+   * AUTO wrapping all returning functions as side effects
+   */
 
   const activeEntry = archive.current[activeActionId.current]
 
-  // todo test
+  // when state is a function
+  const wrappFunction = <T>(fn: T, id: string): T =>
+    useSideEffect(
+      fn as unknown as (...args: unknown[]) => unknown,
+      id
+    ) as unknown as T
+
   if (typeof activeEntry.state === 'function') {
-    return wrappFunction(
-      activeEntry.state as unknown as Function
-    ) as unknown as State
+    return wrappFunction(activeEntry.state, 'SELF')
   }
 
-  // todo test
+  // when state is an array
   if (Array.isArray(activeEntry.state)) {
     return activeEntry.state.map((element, index) =>
       typeof element === 'function'
@@ -209,6 +208,7 @@ export const useDevTools = <State, Props>(
     ) as unknown as State
   }
 
+  // when state is an object
   if (typeof activeEntry.state === 'object') {
     return Object.entries(activeEntry.state).reduce(
       (acc, [key, value]) => ({
@@ -216,7 +216,7 @@ export const useDevTools = <State, Props>(
         [key]: typeof value === 'function' ? wrappFunction(value, key) : value
       }),
       {}
-    ) as unknown as State
+    ) as State
   }
 
   return activeEntry.state
