@@ -126,16 +126,15 @@ export const useDevTools = <State, Props>(
 
   // Initialization
   useEffect(() => {
-    if (devTools.current) {
-      return
-    }
-
     devTools.current = window.__REDUX_DEVTOOLS_EXTENSION__?.connect({
       name
     }) as unknown as DevTools<State>
 
     devTools.current?.init(state)
+  }, [])
 
+  // Messages from GUI
+  useEffect(() => {
     const unsubscribe = devTools.current?.subscribe((message) => {
       console.log(message)
       switch (message.type) {
@@ -195,7 +194,7 @@ export const useDevTools = <State, Props>(
     return () => {
       unsubscribe?.()
     }
-  }, [])
+  })
 
   // Detecting parent props update
   if (!compareOneLevelDeepFunc(lastEntry.props, props)) {
