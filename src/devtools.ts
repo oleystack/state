@@ -61,13 +61,13 @@ export const devToolsDefaultValue: DevToolsContextValue = {
 export const DevToolsContext =
   createContext<DevToolsContextValue>(devToolsDefaultValue)
 
-export const useSideEffect = <Argument, ReturnType>(
-  fn: (...args: Argument[]) => ReturnType,
+export const useSideEffect = <Arguments extends any[], ReturnType>(
+  fn: (...args: Arguments) => ReturnType,
   id: string
 ) => {
   const { actionsQueue } = useContext(DevToolsContext)
 
-  return (...args: Argument[]): ReturnType => {
+  return (...args: Arguments): ReturnType => {
     actionsQueue.current.push({
       type: `ACTION/${id}`,
       payload: args

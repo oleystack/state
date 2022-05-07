@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-import { state, useStoreName } from '@bit-about/state'
+import { state, useSideEffect, useStoreName } from '@bit-about/state'
 
 /**
  * Declaring STATE
@@ -8,8 +8,19 @@ import { state, useStoreName } from '@bit-about/state'
 type Props = { alice: number }
 const useCustomState = ({ alice: initialAlice }: Props) => {
   useStoreName('CustomStore')
+
   const [aliceValue, setAliceValue] = useState(initialAlice)
   const [bobValue, setBobValue] = useState(0)
+
+  const decreaseBobInInterval = useSideEffect(
+    () => setBobValue((oldBobValue) => oldBobValue - 1),
+    'decreaseBobInInterval'
+  )
+
+  useEffect(() => {
+    const intervalId = setInterval(decreaseBobInInterval, 2000)
+    return () => clearInterval(intervalId)
+  }, [setBobValue])
 
   return { aliceValue, setAliceValue, bobValue, setBobValue }
 }
