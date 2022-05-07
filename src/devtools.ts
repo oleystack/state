@@ -154,9 +154,9 @@ export const useDevTools = <State, Props>(
               '[@bit-about/state devtools] Unsupported action format.'
             )
             console.warn(
-              '[@bit-about/state devtools] Available commands: ',
-              '1. Setting state { type: "SET_STATE", state: {...} }',
-              '2. Calling state action { type: "ACTION/yourAction", payload: [] }'
+              '[@bit-about/state devtools] Available commands:\n',
+              '1. Setting state { type: "SET_STATE", state: {...} }\n',
+              '2. Calling state action { type: "ACTION/yourAction", payload: [] }\n'
             )
           }
 
@@ -167,29 +167,34 @@ export const useDevTools = <State, Props>(
           try {
             const {
               type,
-              state = {},
-              payload = []
+              state: payloadState = {},
+              payload: payloadArgs = []
             }: { type: string; state: any; payload: any[] } = JSON.parse(
               message.payload
             )
 
             if (type.startsWith('ACTION/')) {
               const [, id] = type.split('/')
-              state[id](payload)
 
               actionsQueue.current.push({
                 type: `ACTION/${id}`,
-                payload: payload
+                payload: payloadArgs
               })
+
+              state[id](...payloadArgs)
             }
 
             if (type === 'SET_STATE') {
               actionsQueue.current.push({
                 type: `SET_STATE`,
-                state
+                state: payloadState
               })
+
+              // Force refresh
+              setActiveActionId((value) => ({ current: value.current }))
             }
           } catch (e) {
+            console.error(e)
             showError()
           }
 
@@ -328,7 +333,13 @@ export const useDevTools = <State, Props>(
 
     devTools.current?.send(action, state)
     if (action.type === 'SET_STATE') {
-      archive.current[lastActionId + 1] = { state: action.state, props }
+      archive.current[lastActionId + 1] = {
+        state: {
+          ...state,
+          ...action.state
+        },
+        props
+      }
     } else {
       archive.current[lastActionId + 1] = { state, props }
     }
