@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { createContext, useContext, useEffect, useRef, useState } from 'react'
 import type {} from '@redux-devtools/extension'
 import { compareOneLevelDeepFunc } from './compare'
@@ -24,11 +26,16 @@ interface ActionJump {
   type: '@@JUMP'
 }
 
+interface ActionReset {
+  type: '@@RESET'
+}
+
 type Action =
   | ActionParentPropsUpdate
   | ActionCall
   | ActionSideEffect
   | ActionJump
+  | ActionReset
 
 type ActionArchiveEntry<State, Props> = {
   state: State
@@ -119,6 +126,10 @@ export const useDevTools = <State, Props>(
 
   // Initialization
   useEffect(() => {
+    if (devTools.current) {
+      return
+    }
+
     devTools.current = window.__REDUX_DEVTOOLS_EXTENSION__?.connect({
       name
     }) as unknown as DevTools<State>
@@ -144,11 +155,16 @@ export const useDevTools = <State, Props>(
             case 'RESET':
               devTools.current?.init(state)
               archive.current = { 0: { state, props } }
+              actionsQueue.current.push({
+                type: '@@RESET'
+              })
               setActiveActionId({ current: 0 })
               break
 
             case 'ROLLBACK':
-              // todo
+              console.error(
+                '[@bit-about/state devtools] Sorry, but rollback action is unsupported.'
+              )
               break
 
             case 'JUMP_TO_STATE':
@@ -161,6 +177,12 @@ export const useDevTools = <State, Props>(
 
             case 'IMPORT_STATE':
               // todo
+              break
+
+            case 'REORDER_ACTION':
+              console.error(
+                '[@bit-about/state devtools] Sorry, but reorder action is unsupported.'
+              )
               break
 
             case 'PAUSE_RECORDING':
@@ -197,8 +219,8 @@ export const useDevTools = <State, Props>(
 
     let [action] = actionsQueue.current
 
-    // Omit @@JUMP action
-    if (action?.type === '@@JUMP') {
+    // Ignoring system actions
+    if (['@@RESET', '@@JUMP'].includes(action?.type)) {
       actionsQueue.current.shift()
       continue
     }
