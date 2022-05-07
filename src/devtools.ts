@@ -157,16 +157,14 @@ export const useDevTools = <State, Props>(
   }, [])
 
   // Detecting parent props update
-  useEffect(() => {
-    if (!compareOneLevelDeepFunc(lastEntry.props, props)) {
-      const action: ActionParentPropsUpdate = {
-        type: 'PARENT_PROPS_UPDATE',
-        props
-      }
-
-      actionsQueue.current.push(action)
+  if (!compareOneLevelDeepFunc(lastEntry.props, props)) {
+    const action: ActionParentPropsUpdate = {
+      type: 'PARENT_PROPS_UPDATE',
+      props
     }
-  }, [props])
+
+    actionsQueue.current.push(action)
+  }
 
   // Actions dispatcher
   do {
