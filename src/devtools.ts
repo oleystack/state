@@ -20,30 +20,43 @@ interface ActionSideEffect {
   type: 'SIDE_EFFECT' | `SIDE_EFFECT/${string}`
 }
 
-type Action = ActionParentPropsUpdate | ActionCall | ActionSideEffect
+interface ActionJump {
+  type: '@@JUMP'
+}
 
-type ActionArchiveEntry<State, Props> = { state: State; props: Props }
+type Action =
+  | ActionParentPropsUpdate
+  | ActionCall
+  | ActionSideEffect
+  | ActionJump
+
+type ActionArchiveEntry<State, Props> = {
+  state: State
+  props: Props
+  type?: string
+}
 
 /**
  * Context
  */
 
-interface DevTools<State = unknown> {
+interface DevTools<State> {
   init: (state: State) => void
   send: (action: Action, state: State) => void
   subscribe: (
-    listener: (
-      message: Action & { payload: { type: string; actionId: number } }
-    ) => void
+    listener: (message: {
+      type: string
+      payload: { type: string; actionId: number }
+    }) => void
   ) => (() => void) | undefined
 }
 
 interface DevToolsContextValue {
-  name: string
+  name: { current: string }
   actionsQueue: { current: Action[] }
 }
 export const devToolsDefaultValue: DevToolsContextValue = {
-  name: '@bit-about/state',
+  name: { current: '@bit-about/state' },
   actionsQueue: { current: [] }
 }
 export const DevToolsContext =
@@ -56,11 +69,10 @@ export const useSideEffect = <Argument, ReturnType>(
   const { actionsQueue } = useContext(DevToolsContext)
 
   return (...args: Argument[]): ReturnType => {
-    const action: ActionCall = {
+    actionsQueue.current.push({
       type: `ACTION/${id}`,
       payload: args
-    }
-    actionsQueue.current.push(action)
+    })
 
     return fn(...args)
   }
@@ -83,101 +95,120 @@ export const useDevTools = <State, Props>(
     return state
   }
 
-  // const isMounted = useRef<boolean>(false)
-  const devTools = useRef<DevTools>()
-  // const isRecording = useRef<boolean>(true)
-  const { name, actionsQueue } = useContext(DevToolsContext)
-
-  const [activeActionId] = useState({
+  const devTools = useRef<DevTools<State>>()
+  const isMounted = useRef<boolean>(false)
+  const isRecording = useRef<boolean>(true)
+  const {
+    name: { current: name },
+    actionsQueue
+  } = useContext(DevToolsContext)
+  const [activeActionId, setActiveActionId] = useState({
     current: 0
   })
   const archive = useRef<Record<number, ActionArchiveEntry<State, Props>>>({
     0: { state, props } // @@INIT
   })
-
   const lastActionId = Object.keys(archive.current)
     .map(Number)
-    .sort()
-    .reverse()[0]
+    .sort((a, b) => b - a)[0]
   const lastEntry = archive.current[lastActionId]
 
+  // Initialization
   useEffect(() => {
     devTools.current = window.__REDUX_DEVTOOLS_EXTENSION__?.connect({
       name
-    }) as unknown as DevTools
+    }) as unknown as DevTools<State>
 
     devTools.current?.init(state)
 
-    // const unsubscribe = devTools?.subscribe((action) => {
-    //   console.log(action)
-    //   switch (action.type) {
-    //     case 'ACTION':
-    //       if (typeof action.payload !== 'string') {
-    //         console.error(
-    //           '[@bit-about/state devtools] Unsupported action format'
-    //         )
-    //       }
+    const unsubscribe = devTools.current?.subscribe((message) => {
+      console.log(message)
+      switch (message.type) {
+        case 'ACTION':
+          if (typeof message.payload !== 'string') {
+            console.error(
+              '[@bit-about/state devtools] Unsupported action format'
+            )
+          }
 
-    //       // Todo parse
-    //       break
+          // Todo parse
+          break
 
-    //     case 'DISPATCH':
-    //       switch (action.payload?.type) {
-    //         case 'COMMIT':
-    //         case 'RESET':
-    //           devTools?.init(state)
-    //           archive.current = { 0: { state, props } }
-    //           lastActionId.current = 0
-    //           setActiveActionId({ current: 0 })
-    //           break
+        case 'DISPATCH':
+          switch (message.payload.type) {
+            case 'COMMIT':
+            case 'RESET':
+              devTools.current?.init(state)
+              archive.current = { 0: { state, props } }
+              setActiveActionId({ current: 0 })
+              break
 
-    //         case 'ROLLBACK':
-    //           // todo
-    //           break
+            case 'ROLLBACK':
+              // todo
+              break
 
-    //         case 'JUMP_TO_STATE':
-    //         case 'JUMP_TO_ACTION':
-    //           setActiveActionId({ current: action.payload.actionId })
-    //           break
+            case 'JUMP_TO_STATE':
+            case 'JUMP_TO_ACTION':
+              actionsQueue.current.push({
+                type: '@@JUMP'
+              })
+              setActiveActionId({ current: message.payload.actionId })
+              break
 
-    //         case 'IMPORT_STATE':
-    //           // todo
-    //           break
+            case 'IMPORT_STATE':
+              // todo
+              break
 
-    //         case 'PAUSE_RECORDING':
-    //           isRecording.current = !isRecording.current
-    //           break
-    //       }
-    //   }
-    // })
+            case 'PAUSE_RECORDING':
+              isRecording.current = !isRecording.current
+              break
+          }
+      }
+    })
 
-    // return () => {
-    //   unsubscribe?.()
-    // }
+    return () => {
+      unsubscribe?.()
+    }
   }, [])
 
   // Detecting parent props update
   if (!compareOneLevelDeepFunc(lastEntry.props, props)) {
-    const action: ActionParentPropsUpdate = {
+    actionsQueue.current.push({
       type: 'PARENT_PROPS_UPDATE',
       props
-    }
-
-    actionsQueue.current.push(action)
+    })
   }
 
   // Actions dispatcher
   do {
+    if (!isMounted.current) {
+      isMounted.current = true
+      break
+    }
+
+    if (!isRecording.current) {
+      actionsQueue.current = []
+      break
+    }
+
     const [firstAction] = actionsQueue.current
-    const action: Action =
-      firstAction ?? ({ type: 'SIDE_EFFECT' } as ActionSideEffect)
+    const action: Action = firstAction ?? { type: 'SIDE_EFFECT' }
+
+    // Omit @@JUMP action
+    if (action.type === '@@JUMP') {
+      actionsQueue.current.shift()
+      continue
+    }
 
     devTools.current?.send(action, state)
-    archive.current[lastActionId + 1] = { state, props }
+    archive.current[lastActionId + 1] = { state, props, type: action.type }
     actionsQueue.current.shift()
 
     // Moving to the newest one
-    activeActionId.current = lastActionId + 1
+    // If active was last
+    if (activeActionId.current === lastActionId) {
+      activeActionId.current = lastActionId + 1
+    }
   } while (actionsQueue.current.length)
 
   /**
