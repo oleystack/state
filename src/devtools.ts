@@ -33,7 +33,6 @@ type Action =
 type ActionArchiveEntry<State, Props> = {
   state: State
   props: Props
-  type?: string
 }
 
 /**
@@ -76,6 +75,11 @@ export const useSideEffect = <Argument, ReturnType>(
 
     return fn(...args)
   }
+}
+
+export const useStoreName = (name: string) => {
+  const { name: storeName } = useContext(DevToolsContext)
+  storeName.current = name
 }
 
 /**
@@ -191,17 +195,26 @@ export const useDevTools = <State, Props>(
       break
     }
 
-    const [firstAction] = actionsQueue.current
-    const action: Action = firstAction ?? { type: 'SIDE_EFFECT' }
+    let [action] = actionsQueue.current
 
     // Omit @@JUMP action
-    if (action.type === '@@JUMP') {
+    if (action?.type === '@@JUMP') {
       actionsQueue.current.shift()
       continue
     }
 
+    // Detect if it's normal parent rerender of unexpected change (side effect)
+    // Props are checking above
+    if (!action && !compareOneLevelDeepFunc(lastEntry.state, state)) {
+      action = { type: 'SIDE_EFFECT' }
+    }
+
+    if (!action) {
+      break
+    }
+
     devTools.current?.send(action, state)
-    archive.current[lastActionId + 1] = { state, props, type: action.type }
+    archive.current[lastActionId + 1] = { state, props }
     actionsQueue.current.shift()
 
     // Moving to the newest one
