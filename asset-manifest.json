@@ -1,15 +1,17 @@
 {
   "files": {
-    "main.css": "/state/static/css/main.44977f1a.css",
-    "main.js": "/state/static/js/main.ab555e88.js",
+    "main.css": "/state/static/css/main.4a38c050.css",
+    "main.js": "/state/static/js/main.7427f6cd.js",
     "static/js/node_modules_web-vitals_dist_web-vitals_js.d4fd698b.chunk.js": "/state/static/js/node_modules_web-vitals_dist_web-vitals_js.d4fd698b.chunk.js",
+    "static/media/github.svg": "/state/static/media/github.52aa3528d731647914f73d5a049b3eff.svg",
     "index.html": "/state/index.html",
-    "main.44977f1a.css.map": "/state/static/css/main.44977f1a.css.map",
-    "main.ab555e88.js.map": "/state/static/js/main.ab555e88.js.map",
+    "static/media/npm.svg": "/state/static/media/npm.b14997edb29e03088c97a66977830c68.svg",
+    "main.4a38c050.css.map": "/state/static/css/main.4a38c050.css.map",
+    "main.7427f6cd.js.map": "/state/static/js/main.7427f6cd.js.map",
     "node_modules_web-vitals_dist_web-vitals_js.d4fd698b.chunk.js.map": "/state/static/js/node_modules_web-vitals_dist_web-vitals_js.d4fd698b.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.44977f1a.css",
-    "static/js/main.ab555e88.js"
+    "static/css/main.4a38c050.css",
+    "static/js/main.7427f6cd.js"
   ]
 }
