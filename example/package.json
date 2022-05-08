@@ -16,7 +16,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "node ./build.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -38,5 +38,8 @@
       "last 1 safari version"
     ]
   },
-  "homepage": "https://bit-about.github.io/state"
+  "homepage": "https://bit-about.github.io/state",
+  "devDependencies": {
+    "rewire": "^6.0.0"
+  }
 }
