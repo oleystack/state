@@ -10,11 +10,10 @@
   flex-direction: column;
   position: relative;
 }
-
+ 
 .app-container {
   width: 100%;
   max-width: 996px;
-  margin: 2em 0;
 }
 
 .app-header {
