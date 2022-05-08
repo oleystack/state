@@ -1,0 +1,130 @@
+
+
+
+
+.container {
+  position: relative;
+  border: 1px solid #40434a;
+  margin: 1em;
+  padding: 1em;
+  display: flex;
+  flex: 1;
+}
+
+.demo {
+  margin: 4em 0;
+}
+
+.container-title {
+  font-size: 0.8em;
+  font-weight: bold;
+  position: absolute;
+  margin-top: -1.2em;
+  top: 0;
+  left: 0.5em;
+
+  background-color: #282c34;
+  padding: 0.5em;
+  color: rgb(171, 171, 171);
+  text-transform: uppercase;
+}
+
+.container-info {
+  font-size: 0.8em;
+  position: absolute;
+  margin-top: -1.2em;
+  top: 0;
+  right: 0.5em;
+
+  background-color: #282c34;
+  padding: 0.5em;
+  color: rgb(171, 171, 171);
+}
+
+.container-info span {
+  display: inline-block;
+  margin-left: 0.5em;
+}
+  
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop-right {
+  justify-content: flex-end;
+}
+
+.center {
+  justify-content: center;
+}
+
+@media only screen and (max-width: 600px) {
+  .row:not(.forced) {
+    flex-direction: column;
+  }
+
+  .container ~ .container {
+    margin-top: 0.5em;
+  }
+
+  .desktop-right {
+    justify-content: center;
+  }
+}
+
+.button {
+  background: #1d8cf8;
+  background-image: linear-gradient(to bottom left,#1d8cf8,#3358f4,#1d8cf8);
+  background-size: 210% 210%;
+  background-position: 100% 0;
+  color: #fff;
+  box-shadow: 2px 2px 6px rgb(0 0 0 / 40%);
+  text-align: center;
+  padding: 8px 17px;
+  font-weight: 400;
+  border-radius: 0.25rem;
+  border: none;
+  margin: 1em;
+  cursor: pointer;
+}
+
+.code-preview {
+  background-color: #1e2126;
+  padding: 0.5em 1.5em;
+  margin: 0.5em;
+  text-align: left;
+  color: #80899c;
+  border: 1px solid #343740;
+}
+
+.code-preview p {
+  margin: 0.3em 0;
+  font-size: 0.8em;
+}
+
+.bump-enter{
+  opacity: 0;
+  transform: scale(2);
+}
+.bump-exit{
+  opacity: 1;
+  transform: scale(1);
+}
+.bump-enter-active{
+  opacity: 1;
+  transform: scale(1);
+}
+.bump-exit-active{
+  opacity: 0;
+  transform: scale(2);
+}
+.bump-enter-active,
+.bump-exit-active{
+  transition: all 300ms;
+}

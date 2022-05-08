@@ -20,7 +20,10 @@ npm i @bit-about/state
 - ...or utilise static access
 - No centralized state provider
 - Tiny - only **1.1kB**
+- Redux DevTools support
 - **Just works** ™
+
+### ➡️ [Check demo](https://bit-about.github.io/state/)
 
 ## Usage
 
