@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { state, useStoreName } from '@bit-about/state'
+import { state, useStoreName, useSideEffect } from '@bit-about/state'
 import { SwitchTransition, CSSTransition } from 'react-transition-group'
 import './Demo.css'
 
@@ -12,7 +12,24 @@ const [StoreProvider, useStore] = state(({ alice: initialAlice }) => {
   const [aliceValue, setAliceValue] = useState(initialAlice)
   const [bobValue, setBobValue] = useState(0)
 
-  return { aliceValue, setAliceValue, bobValue, setBobValue }
+  // Side effects test
+  const [autoIncrementJohnValue, setAutoIncrementJohnValue] = useState(0)
+  const incrementJohn = useSideEffect(
+    () => setAutoIncrementJohnValue((value) => value + 1),
+    'autoIncrementJohn'
+  )
+  useEffect(() => {
+    const interval = setInterval(incrementJohn, 5000)
+    return () => clearInterval(interval)
+  }, [incrementJohn])
+
+  return {
+    aliceValue,
+    setAliceValue,
+    bobValue,
+    setBobValue,
+    autoIncrementJohnValue
+  }
 })
 
 /**
@@ -96,12 +113,13 @@ function BobBox() {
 
 /** Store preview */
 function StorePreview() {
-  const { aliceValue, bobValue } = useStore()
+  const { aliceValue, bobValue, autoIncrementJohnValue } = useStore()
 
   return (
     <code className='code-preview'>
       <p>aliceValue: {aliceValue}</p>
       <p>bobValue: {bobValue}</p>
+      <p>autoIncrementJohnValue: {autoIncrementJohnValue}</p>
     </code>
   )
 }
