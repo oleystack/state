@@ -1,4 +1,6 @@
 import Demo from '../Demo/Demo'
+import { ReactComponent as Github } from '../../icons/github.svg'
+import { ReactComponent as Npm } from '../../icons/npm.svg'
 import './App.css'
 
 function App() {
@@ -6,10 +8,10 @@ function App() {
     <div className='app'>
       <div className='app-container'>
         <header className='app-header'>
-          <h1 className='title'>@bit-about/state</h1>
-          <small>
+          <h2 className='title'>@bit-about/state</h2>
+          <h1 className='desc'>
             🚀 Tiny and powerful React hook-based state management library.
-          </small>
+          </h1>
           <ul className='menu'>
             <li>
               <a
@@ -18,7 +20,12 @@ function App() {
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                github
+                <Github
+                  fill='rgb(171, 171, 171)'
+                  className='icon'
+                  width={32}
+                  height={32}
+                />
               </a>
             </li>
             <li>
@@ -28,13 +35,19 @@ function App() {
                 target='_blank'
                 rel='noopener noreferrer'
               >
-                npm
+                <Npm
+                  fill='rgb(171, 171, 171)'
+                  className='icon'
+                  width={32}
+                  height={32}
+                />
               </a>
             </li>
           </ul>
         </header>
         <Demo />
       </div>
+      <p className='footer'>🎉 Redux DevTools works on this page</p>
     </div>
   )
 }

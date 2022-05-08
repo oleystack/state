@@ -2,15 +2,19 @@
 .app {
   text-align: center;
   padding: 1em;
+  padding-bottom: 3em;
   display: flex;
   min-height: 100vh;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  position: relative;
 }
 
 .app-container {
   width: 100%;
   max-width: 996px;
+  margin: 2em 0;
 }
 
 .app-header {
@@ -24,14 +28,21 @@
 }
 
 .title {
+  font-size: 2em;
+  margin: 0;
   margin-bottom: 10px;
+}
+
+.desc {
+  font-size: smaller;
+  margin: 0;
 }
 
 ul.menu {
   list-style: none;
   margin: 0;
   padding: 0;
-  margin-top: 1em;
+  margin-top: 1.5em;
 }
 
 ul.menu li {
@@ -39,15 +50,18 @@ ul.menu li {
   margin: 0 0.5em;
 }
 
-
-.link {
-  color: #61dafb;
+.footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  line-height: 3em;
+  color: rgb(171, 171, 171);
   font-size: 0.8em;
 }
 
-.demo-container {
-  border: 1px solid #fff;
-  margin: 1em;
-  padding: 1em;
-  margin-top: 4em;
+.icon {
+
 }
