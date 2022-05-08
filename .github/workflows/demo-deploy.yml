@@ -24,10 +24,10 @@ jobs:
       working-directory: .
       run: |
         npm install
-        npm build
+        npm run build
         cd example && npm install
         
     - name: Prepare
       working-directory: ./example
       run: |
-        npm deploy
+        npm run deploy
