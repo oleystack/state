@@ -14,7 +14,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v3
-    - uses: fregante/setup-git-user@v1
+    - run: git config --global user.email "bot@bit-about.tools"
+    - run: git config --global user.name "BitAbout"
     
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
