@@ -13,10 +13,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "predeploy": "dotenv -e .env npm run build",
-    "deploy": "dotenv -e .env gh-pages -d build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
-    "build": "dotenv -e .env react-scripts build",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -37,10 +37,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "devDependencies": {
-    "cross-env": "^7.0.3",
-    "dotenv-cli": "^5.1.0"
   },
   "homepage": "https://bit-about.github.io/state"
 }
