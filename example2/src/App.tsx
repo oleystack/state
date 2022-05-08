@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-
 import { state, useSideEffect, useStoreName } from '@bit-about/state'
+import './App.module.css'
 
 /**
  * Declaring STATE
