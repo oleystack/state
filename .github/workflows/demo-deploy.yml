@@ -28,6 +28,7 @@ jobs:
         cd example && npm install
         
     - name: Deploy with gh-pages
+      working-directory: ./example
       run: |
         git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
         npm run deploy -- -u "bit-about <bot@bit-about.tools>"
