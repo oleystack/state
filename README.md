@@ -23,6 +23,8 @@ npm i @bit-about/state
 - Redux DevTools support
 - **Just works** ™
 
+### ➡️ [Check demo](https://bit-about.github.io/state/)
+
 ## Usage
 
 ```jsx
