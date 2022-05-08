@@ -17,6 +17,7 @@
     "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "node ./build.js",
+    "postbuild": "react-snap",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -40,6 +41,7 @@
   },
   "homepage": "https://bit-about.github.io/state",
   "devDependencies": {
+    "react-snap": "^1.23.0",
     "rewire": "^6.0.0"
   }
 }
