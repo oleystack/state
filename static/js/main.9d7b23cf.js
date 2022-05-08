@@ -5536,8 +5536,8 @@ var n={};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 !function(){__webpack_require__.r(n);
 /* harmony import */__webpack_require__("./node_modules/react/index.js");
-/* harmony import */var e=__webpack_require__("./node_modules/react-dom/index.js"),t=(__webpack_require__("./src/index.css"),__webpack_require__("./src/components/App/App.js")),r=__webpack_require__("./src/reportWebVitals.js"),o=__webpack_require__("./node_modules/react/jsx-runtime.js");e.render((0,o.jsx)(t.default,{}),document.getElementById("root")),// If you want to start measuring performance in your app, pass a function
+/* harmony import */var e=__webpack_require__("./node_modules/react-dom/index.js"),t=(__webpack_require__("./src/index.css"),__webpack_require__("./src/components/App/App.js")),r=__webpack_require__("./src/reportWebVitals.js"),o=__webpack_require__("./node_modules/react/jsx-runtime.js");e.hydrate((0,o.jsx)(t.default,{}),document.getElementById("root")),// If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 (0,r.default)(console.log)}()}();
-//# sourceMappingURL=main.bbb31822.js.map
+//# sourceMappingURL=main.9d7b23cf.js.map
