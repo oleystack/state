@@ -4,6 +4,31 @@ import { SwitchTransition, CSSTransition } from 'react-transition-group'
 import './Demo.css'
 
 /**
+ * Extracted code from @bit-about/state store creator
+ * for presenting useSideEffect purpose.
+ * autoIncrementJohn is controlled by internal unexpected "force"
+ * which is common called sideEffect.
+ * 
+ * When you wrap this function using useSideEffect
+ * you can control changes in Redux DevTools
+ */
+function useAutoIncrementJohn() {
+  const [autoIncrementJohn, setAutoIncrementJohn] = useState(0)
+
+  const incrementJohn = useSideEffect(
+    () => setAutoIncrementJohn((value) => value + 1),
+    'autoIncrementJohn'
+  )
+
+  useEffect(() => {
+    const interval = setInterval(incrementJohn, 5000)
+    return () => clearInterval(interval)
+  }, [incrementJohn])
+
+  return autoIncrementJohn
+}
+
+/**
  * @bit-about/state
  */
 const [StoreProvider, useStore] = state(({ alice: initialAlice }) => {
@@ -12,16 +37,8 @@ const [StoreProvider, useStore] = state(({ alice: initialAlice }) => {
   const [alice, setAlice] = useState(initialAlice)
   const [bob, setBob] = useState(0)
 
-  // Side effects test
-  const [autoIncrementJohn, setAutoIncrementJohn] = useState(0)
-  const incrementJohn = useSideEffect(
-    () => setAutoIncrementJohn((value) => value + 1),
-    'autoIncrementJohn'
-  )
-  useEffect(() => {
-    const interval = setInterval(incrementJohn, 5000)
-    return () => clearInterval(interval)
-  }, [incrementJohn])
+  // Side effects example
+  const autoIncrementJohn = useAutoIncrementJohn()
 
   return {
     alice,
