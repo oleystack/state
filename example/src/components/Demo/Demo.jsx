@@ -96,7 +96,7 @@ function AliceBox() {
       <span className='container-title'>component_2</span>
       <RenderCounter />
       <code className='code-preview'>
-        <p>alice: {alice}</p>
+        <p suppressHydrationWarning>alice: {alice}</p>
       </code>
       <button className='button' onClick={() => setAlice((value) => value + 1)}>
         Increment Alice
@@ -115,8 +115,8 @@ function BobBox() {
     <div className='container column '>
       <span className='container-title'>component_2</span>
       <RenderCounter />
-      <code className='code-preview'>
-        <p>bob: {bob}</p>
+      <code className='code-preview' suppressHydrationWarning>
+        <p suppressHydrationWarning>bob: {bob}</p>
       </code>
       <button className='button' onClick={() => setBob((value) => value + 1)}>
         Increment Bob
@@ -131,9 +131,9 @@ function StorePreview() {
 
   return (
     <code className='code-preview'>
-      <p>alice: {alice}</p>
-      <p>bob: {bob}</p>
-      <p>autoIncrementJohn: {autoIncrementJohn}</p>
+      <p suppressHydrationWarning>alice: {alice}</p>
+      <p suppressHydrationWarning>bob: {bob}</p>
+      <p suppressHydrationWarning>autoIncrementJohn: {autoIncrementJohn}</p>
     </code>
   )
 }
