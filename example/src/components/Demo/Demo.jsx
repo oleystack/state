@@ -78,7 +78,7 @@ const RenderCounter = () => {
           }
           classNames='bump'
         >
-          <span> {renderCounter.current}</span>
+          <span suppressHydrationWarning> {renderCounter.current}</span>
         </CSSTransition>
       </SwitchTransition>
     </span>

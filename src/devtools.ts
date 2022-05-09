@@ -146,7 +146,6 @@ export const useDevTools = <State, Props>(
   // Messages from GUI
   useEffect(() => {
     const unsubscribe = devTools.current?.subscribe((message) => {
-      console.log(message)
       switch (message.type) {
         case 'ACTION':
           const showError = () => {
