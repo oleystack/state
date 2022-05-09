@@ -9,13 +9,13 @@ import './Demo.css'
 const [StoreProvider, useStore] = state(({ alice: initialAlice }) => {
   useStoreName('MyCustomStore')
 
-  const [aliceValue, setAliceValue] = useState(initialAlice)
-  const [bobValue, setBobValue] = useState(0)
+  const [alice, setAlice] = useState(initialAlice)
+  const [bob, setBob] = useState(0)
 
   // Side effects test
-  const [autoIncrementJohnValue, setAutoIncrementJohnValue] = useState(0)
+  const [autoIncrementJohn, setAutoIncrementJohn] = useState(0)
   const incrementJohn = useSideEffect(
-    () => setAutoIncrementJohnValue((value) => value + 1),
+    () => setAutoIncrementJohn((value) => value + 1),
     'autoIncrementJohn'
   )
   useEffect(() => {
@@ -24,11 +24,11 @@ const [StoreProvider, useStore] = state(({ alice: initialAlice }) => {
   }, [incrementJohn])
 
   return {
-    aliceValue,
-    setAliceValue,
-    bobValue,
-    setBobValue,
-    autoIncrementJohnValue
+    alice,
+    setAlice,
+    bob,
+    setBob,
+    autoIncrementJohn
   }
 })
 
@@ -72,17 +72,14 @@ const RenderCounter = () => {
  * COMPONENT_1
  */
 function AliceBox() {
-  const [alice, setAlice] = useStore((state) => [
-    state.aliceValue,
-    state.setAliceValue
-  ])
+  const [alice, setAlice] = useStore((state) => [state.alice, state.setAlice])
 
   return (
     <div className='container column '>
       <span className='container-title'>component_2</span>
       <RenderCounter />
       <code className='code-preview'>
-        <p>aliceValue: {alice}</p>
+        <p>alice: {alice}</p>
       </code>
       <button className='button' onClick={() => setAlice((value) => value + 1)}>
         Increment Alice
@@ -95,14 +92,14 @@ function AliceBox() {
  * COMPONENT_2
  */
 function BobBox() {
-  const [bob, setBob] = useStore((state) => [state.bobValue, state.setBobValue])
+  const [bob, setBob] = useStore((state) => [state.bob, state.setBob])
 
   return (
     <div className='container column '>
       <span className='container-title'>component_2</span>
       <RenderCounter />
       <code className='code-preview'>
-        <p>bobValue: {bob}</p>
+        <p>bob: {bob}</p>
       </code>
       <button className='button' onClick={() => setBob((value) => value + 1)}>
         Increment Bob
@@ -113,13 +110,13 @@ function BobBox() {
 
 /** Store preview */
 function StorePreview() {
-  const { aliceValue, bobValue, autoIncrementJohnValue } = useStore()
+  const { alice, bob, autoIncrementJohn } = useStore()
 
   return (
     <code className='code-preview'>
-      <p>aliceValue: {aliceValue}</p>
-      <p>bobValue: {bobValue}</p>
-      <p>autoIncrementJohnValue: {autoIncrementJohnValue}</p>
+      <p>alice: {alice}</p>
+      <p>bob: {bob}</p>
+      <p>autoIncrementJohn: {autoIncrementJohn}</p>
     </code>
   )
 }
