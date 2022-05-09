@@ -22,8 +22,25 @@ return l.createElement("svg",_extends({fill:"current",stroke:"current",role:"img
 /* harmony import */ /* harmony default export */n.default=function App(){return(0,p.jsxs)("div",{className:"app",children:[(0,p.jsxs)("div",{className:"app-container",children:[(0,p.jsxs)("header",{className:"app-header",children:[(0,p.jsx)("h2",{className:"title",children:"@bit-about/state"}),(0,p.jsx)("h1",{className:"desc",children:"\ud83d\ude80 Tiny and powerful React hook-based state management library."}),(0,p.jsxs)("ul",{className:"menu",children:[(0,p.jsx)("li",{children:(0,p.jsx)("a",{className:"link",href:"https://github.com/bit-about/state",target:"_blank",rel:"noopener noreferrer",children:(0,p.jsx)(l.ReactComponent,{fill:"rgb(171, 171, 171)",className:"icon",width:32,height:32})})}),(0,p.jsx)("li",{children:(0,p.jsx)("a",{className:"link",href:"https://www.npmjs.com/package/@bit-about/state",target:"_blank",rel:"noopener noreferrer",children:(0,p.jsx)(d.ReactComponent,{fill:"rgb(171, 171, 171)",className:"icon",width:32,height:32})})})]})]}),(0,p.jsx)(a.default,{})]}),(0,p.jsx)("p",{className:"footer",children:"\ud83c\udf89 Redux DevTools works on this page"})]})}},
 /***/"./src/components/Demo/Demo.jsx":
 /***/function(t,n,o){"use strict";o.r(n);
-/* harmony import */var a=o("./node_modules/@babel/runtime/helpers/esm/slicedToArray.js"),l=o("../node_modules/react/index.js"),d=o("../dist/index.js"),p=o("./node_modules/react-transition-group/esm/SwitchTransition.js"),m=o("./node_modules/react-transition-group/esm/CSSTransition.js"),h=(o("./src/components/Demo/Demo.css"),o("../node_modules/react/jsx-runtime.js")),v=(0,d.state)((function(t){var n=t.alice;(0,d.useStoreName)("MyCustomStore");var o=(0,l.useState)(n),p=(0,a.default)(o,2),m=p[0],h=p[1],v=(0,l.useState)(0),g=(0,a.default)(v,2),b=g[0],C=g[1],k=(0,l.useState)(0),T=(0,a.default)(k,2),w=T[0],x=T[1],S=(0,d.useSideEffect)((function(){return x((function(t){return t+1}))}),"autoIncrementJohn");return(0,l.useEffect)((function(){var t=setInterval(S,5e3);return function(){return clearInterval(t)}}),[S]),{alice:m,setAlice:h,bob:b,setBob:C,autoIncrementJohn:w}})),g=(0,a.default)(v,2),b=g[0],C=g[1],k=function RenderCounter(){var t=(0,l.useRef)(1);return(0,l.useEffect)((function(){t.current=t.current+1})),(0,h.jsxs)("span",{className:"container-info",children:["\ud83d\udd04",(0,h.jsx)(p.default,{children:(0,h.jsx)(m.default,{addEndListener:function addEndListener(t,n){return t.addEventListener("transitionend",n,!1)},classNames:"bump",children:(0,h.jsxs)("span",{children:[" ",t.current]})},t.current)})]})};
+/* harmony import */var a=o("./node_modules/@babel/runtime/helpers/esm/slicedToArray.js"),l=o("../node_modules/react/index.js"),d=o("../dist/index.js"),p=o("./node_modules/react-transition-group/esm/SwitchTransition.js"),m=o("./node_modules/react-transition-group/esm/CSSTransition.js"),h=(o("./src/components/Demo/Demo.css"),o("../node_modules/react/jsx-runtime.js"));
 /* harmony import */
+/**
+ * @bit-about/state
+ */
+var v=(0,d.state)((function(t){var n=t.alice;(0,d.useStoreName)("MyCustomStore");var o=(0,l.useState)(n),p=(0,a.default)(o,2),m=p[0],h=p[1],v=(0,l.useState)(0),g=(0,a.default)(v,2);return{alice:m,setAlice:h,bob:g[0],setBob:g[1],autoIncrementJohn:
+/**
+ * Extracted code from @bit-about/state store creator
+ * for presenting useSideEffect purpose.
+ * autoIncrementJohn is controlled by internal unexpected "force"
+ * which is common called sideEffect.
+ * 
+ * When you wrap this function using useSideEffect
+ * you can control changes in Redux DevTools
+ */
+function useAutoIncrementJohn(){var t=(0,l.useState)(0),n=(0,a.default)(t,2),o=n[0],p=n[1],m=(0,d.useSideEffect)((function(){return p((function(t){return t+1}))}),"autoIncrementJohn");return(0,l.useEffect)((function(){var t=setInterval(m,5e3);return function(){return clearInterval(t)}}),[m]),o}()}})),g=(0,a.default)(v,2),b=g[0],C=g[1],k=function RenderCounter(){var t=(0,l.useRef)(1);return(0,l.useEffect)((function(){t.current=t.current+1})),(0,h.jsxs)("span",{className:"container-info",children:["\ud83d\udd04",(0,h.jsx)(p.default,{children:(0,h.jsx)(m.default,{addEndListener:function addEndListener(t,n){return t.addEventListener("transitionend",n,!1)},classNames:"bump",children:(0,h.jsxs)("span",{children:[" ",t.current]})},t.current)})]})};
+/**
+ * Used for testing rerending component scenario
+ */
 /**
  * COMPONENT_1
  */
@@ -6192,4 +6209,4 @@ var o={};
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 (0,n.default)(console.log)}()}();
-//# sourceMappingURL=main.b52ec0db.js.map
+//# sourceMappingURL=main.979673d3.js.map
