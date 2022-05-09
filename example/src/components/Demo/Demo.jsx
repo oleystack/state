@@ -92,7 +92,7 @@ function AliceBox() {
   const [alice, setAlice] = useStore((state) => [state.alice, state.setAlice])
 
   return (
-    <div className='container column '>
+    <div className='container column'>
       <span className='container-title'>component_2</span>
       <RenderCounter />
       <code className='code-preview'>
@@ -112,7 +112,7 @@ function BobBox() {
   const [bob, setBob] = useStore((state) => [state.bob, state.setBob])
 
   return (
-    <div className='container column '>
+    <div className='container column'>
       <span className='container-title'>component_2</span>
       <RenderCounter />
       <code className='code-preview' suppressHydrationWarning>
