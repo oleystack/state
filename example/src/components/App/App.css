@@ -61,6 +61,8 @@ ul.menu li {
   font-size: 0.8em;
 }
 
-.icon {
-
+@media only screen and (max-width: 600px) {
+  .app-container {
+    margin-top: 4em;
+  }
 }
