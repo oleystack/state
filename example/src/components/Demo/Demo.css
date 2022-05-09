@@ -1,7 +1,3 @@
-
-
-
-
 .container {
   position: relative;
   border: 1px solid #40434a;
@@ -46,7 +42,7 @@
   display: inline-block;
   margin-left: 0.5em;
 }
-  
+
 .row {
   display: flex;
   flex-direction: row;
@@ -79,53 +75,23 @@
   }
 }
 
-.button {
-  background: #1d8cf8;
-  background-image: linear-gradient(to bottom left,#1d8cf8,#3358f4,#1d8cf8);
-  background-size: 210% 210%;
-  background-position: 100% 0;
-  color: #fff;
-  box-shadow: 2px 2px 6px rgb(0 0 0 / 40%);
-  text-align: center;
-  padding: 8px 17px;
-  font-weight: 400;
-  border-radius: 0.25rem;
-  border: none;
-  margin: 1em;
-  cursor: pointer;
-}
-
-.code-preview {
-  background-color: #1e2126;
-  padding: 0.5em 1.5em;
-  margin: 0.5em;
-  text-align: left;
-  color: #80899c;
-  border: 1px solid #343740;
-}
-
-.code-preview p {
-  margin: 0.3em 0;
-  font-size: 0.7em;
-}
-
-.bump-enter{
+.bump-enter {
   opacity: 0;
   transform: scale(2);
 }
-.bump-exit{
+.bump-exit {
   opacity: 1;
   transform: scale(1);
 }
-.bump-enter-active{
+.bump-enter-active {
   opacity: 1;
   transform: scale(1);
 }
-.bump-exit-active{
+.bump-exit-active {
   opacity: 0;
   transform: scale(2);
 }
 .bump-enter-active,
-.bump-exit-active{
+.bump-exit-active {
   transition: all 300ms;
 }
