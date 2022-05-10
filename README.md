@@ -145,6 +145,15 @@ const [Provider, useStore] = state(
 )
 ```
 
+## Redux DevTools support - [Check our wiki](https://github.com/bit-about/state/wiki/Redux-DevTools)
+<details>
+  <summary>Presentation</summary>
+  
+https://user-images.githubusercontent.com/1496580/167521849-5529a981-31f6-47d5-8830-054018734f00.mov
+</details>
+
+
+
 ## BitAboutState 💛 [BitAboutEvent](https://github.com/bit-about/event)
 
 Are you tired of sending logic to the related components?<br />
