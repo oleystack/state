@@ -19,7 +19,7 @@ npm i @bit-about/state
 - Get state from a hook...
 - ...or utilise static access
 - No centralized state provider
-- Tiny - only **1.1kB**
+- Tiny - only **1.4kB**
 - Redux DevTools support
 - **Just works** ™
 
