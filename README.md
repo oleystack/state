@@ -216,11 +216,11 @@ const avatar = useUser(state => state.user.avatar)
 - [use-context-selector](https://github.com/dai-shi/use-context-selector) & [FluentUI](https://github.com/microsoft/fluentui) - fancy re-render avoiding tricks and code main inspiration
 
 ## License
-MIT © [Maciej Olejnik 🇵🇱](https://github.com/Gareneye)
+MIT © [Maciej Olejnik 🇵🇱](https://github.com/macolej)
 
 ## Support me 
 
-<a href="https://github.com/sponsors/Gareneye"><img alt="Support me!" src="https://img.shields.io/badge/github.com-Support%20me!-green"/></a>
+<a href="https://github.com/sponsors/macolej"><img alt="Support me!" src="https://img.shields.io/badge/github.com-Support%20me!-green"/></a>
 
 If you use my library and you like it...<br />
 it would be nice if you put the name `BitAboutState` in the work experience section of your resume.<br />
