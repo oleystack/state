@@ -2,7 +2,6 @@ import * as React from 'react'
 import { GET_SELLECTOR_NULL, isSelectorObjectCreatedOnFly } from './common'
 import { compareFunc, compareOneLevelDeepFunc } from './compare'
 import { createContext, useContextSelector } from './context'
-import { DevToolsContext, devToolsDefaultValue, useDevTools } from './devtools'
 import { ContextListener, StateSelector } from './types'
 
 type StateSelectorHook<State> = (<SelectedState>(
@@ -23,7 +22,7 @@ type StateStore<State> = {
 }
 
 type StateTuple<Props, State> = [
-  React.FC<Props>,
+  React.FC<Props & { children?: React.ReactNode | undefined }>,
   StateSelectorHook<State>,
   StateStore<State>
 ]
@@ -44,17 +43,14 @@ function state<Props = {}, State = undefined>(
    * State Provider
    * @returns React.FC
    */
-  const StateProvider: React.FC<Props> = ({ children, ...props }) => {
-    let value = useValue(props as Props)
-    value = useDevTools(value, props as Props)
+  const StateProvider: React.FC<
+    Props & { children?: React.ReactNode | undefined }
+  > = ({ children, ...props }) => {
+    const value = useValue(props as Props)
 
     cache.state = value
 
-    return React.createElement(
-      DevToolsContext.Provider,
-      { value: devToolsDefaultValue },
-      React.createElement(context.Provider, { value }, children)
-    )
+    return React.createElement(context.Provider, { value }, children)
   }
 
   /**

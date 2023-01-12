@@ -1,3 +1,4 @@
+import { trap } from './trap'
 import { StateSelector } from './types'
 
 export const isDev = process.env.NODE_ENV !== 'production'
@@ -15,7 +16,7 @@ export const GET_SELLECTOR_NULL =
 export const isSelectorObjectCreatedOnFly = <Value, SelectedValue>(
   selector: StateSelector<Value, SelectedValue>
 ) => {
-  const obj = {} as Value
+  const obj = trap as Value
 
   // eslint-disable-next-line no-self-compare
   return selector(obj) !== selector(obj)

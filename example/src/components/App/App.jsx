@@ -47,7 +47,6 @@ function App() {
         </header>
         <Demo />
       </div>
-      <p className='footer'>🎉 Redux DevTools works on this page</p>
     </div>
   )
 }

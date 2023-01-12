@@ -20,7 +20,6 @@ npm i @bit-about/state
 - ...or utilise static access
 - No centralized state provider
 - Tiny - only **1.4kB**
-- Redux DevTools support
 - **Just works** ™
 
 ### ➡️ [Check demo](https://bit-about.github.io/state/)
@@ -144,20 +143,6 @@ const [Provider, useStore] = state(
   }
 )
 ```
-
-## Redux DevTools support
-<details>
-  <summary>Presentation</summary>
-  
-https://user-images.githubusercontent.com/1496580/167521849-5529a981-31f6-47d5-8830-054018734f00.mov
-</details>
-
-To help work with DevTools two hooks helpers have been introduced:
-- [`useSideEffect`](https://github.com/bit-about/state/wiki/Redux-DevTools#recording-side-effects) to make state change expected and followable in dev tools
-- [`useStoreName`](https://github.com/bit-about/state/wiki/Redux-DevTools#giving-a-name-to-store) to give a name inspected store
-
-[How to use Redux DevTools](https://github.com/bit-about/state/wiki/Redux-DevTools)
-
 
 ## BitAboutState 💛 [BitAboutEvent](https://github.com/bit-about/event)
 

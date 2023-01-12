@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react'
-import { state, useStoreName, useSideEffect } from '@bit-about/state'
+import { state } from '@bit-about/state'
 import { SwitchTransition, CSSTransition } from 'react-transition-group'
 import './Demo.css'
+import { useCallback } from 'react'
 
 /**
  * Extracted code from @bit-about/state store creator
@@ -15,10 +16,7 @@ import './Demo.css'
 function useAutoIncrementJohn() {
   const [autoIncrementJohn, setAutoIncrementJohn] = useState(0)
 
-  const incrementJohn = useSideEffect(
-    () => setAutoIncrementJohn((value) => value + 1),
-    'autoIncrementJohn'
-  )
+  const incrementJohn = useCallback(() => setAutoIncrementJohn((value) => value + 1), [setAutoIncrementJohn])
 
   useEffect(() => {
     const interval = setInterval(incrementJohn, 5000)
@@ -32,8 +30,6 @@ function useAutoIncrementJohn() {
  * @bit-about/state
  */
 const [StoreProvider, useStore] = state(({ alice: initialAlice }) => {
-  useStoreName('MyCustomStore')
-
   const [alice, setAlice] = useState(initialAlice)
   const [bob, setBob] = useState(0)
 
