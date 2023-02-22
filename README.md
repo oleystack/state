@@ -34,7 +34,9 @@ import { state } from '@bit-about/state'
 const [Provider, useStore] = state(
   () => {
     const [alice, setAlice] = React.useState('Alice')
-    return { alice, setAlice }
+    const [bob, setBob] = React.useState('Bob')
+    
+    return { alice, setAlice, bob, setBob }
   }
 )
 
