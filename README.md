@@ -31,14 +31,13 @@ import * as React from 'react'
 import { state } from '@bit-about/state'
 
 // 1️⃣ Create a hook-based store
-const [Provider, useStore] = state(
-  () => {
-    const [alice, setAlice] = React.useState('Alice')
-    const [bob, setBob] = React.useState('Bob')
+const [Provider, useStore] = state(() => {
+  // Declare your state 
+  const [alice, setAlice] = React.useState('Alice')
+  const [bob, setBob] = React.useState('Bob')
     
-    return { alice, setAlice, bob, setBob }
-  }
-)
+  return { alice, setAlice, bob, setBob }
+})
 
 // 3️⃣ Use the selector hook in component
 const Child = () => {
