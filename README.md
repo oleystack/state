@@ -26,16 +26,15 @@ npm i @bit-about/state
 
 ## Usage
 
-```jsx
-import * as React from 'react'
+```tsx
+import { useState } from 'react'
 import { state } from '@bit-about/state'
 
 // 1️⃣ Create a hook-based store
 const [Provider, useStore] = state(() => {
-  // Declare your state 
-  const [alice, setAlice] = React.useState('Alice')
-  const [bob, setBob] = React.useState('Bob')
-    
+  const [alice, setAlice] = useState('Alice')
+  const [bob, setBob] = useState('Bob')
+  
   return { alice, setAlice, bob, setBob }
 })
 
@@ -45,10 +44,14 @@ const App = () => (
     <Child />
   </Provider>
 )
+```
 
+and then
+```tsx
 // 3️⃣ Use the selector hook in component
 const Child = () => {
   const alice = useStore(state => state.alice)
+  
   return <p>{alice}</p>
 }
 ```
@@ -111,14 +114,14 @@ The state hook allows you to pass any arguments into the context. It can be some
 ```tsx
 const [UserProvider, useUser] = state(
   ({ id }) => {
-    const [user] = React.useState(() => getMyUserBy(id))
+    const [user] = useState(() => getMyUserBy(id))
     return user
   }
 )
 
 const UserProfile = ({ id }) => (
   <UserProvider id={id}>
-    ...
+    {/* ... */}
   </UserProvider>
 )
 ```
@@ -130,12 +133,12 @@ Please remember that functions defined without `React.useCallback` create themse
 ```jsx
 const [Provider, useStore] = state(
   () => {
-    const [counter, setCounter] = React.useState(0);
+    const [counter, setCounter] = useState(0);
    
     // ✖️ It will re-render components every time
     // const incrementCounter = () => setCounter(value => value + 1)
 
-    const incrementCounter = React.useCallback(
+    const incrementCounter = useCallback(
       () => setCounter(value => value + 1),
       [setCounter]
     )
@@ -159,7 +162,7 @@ import User from '../models/user'
 
 const [UserProvider, useUser] = state(
   () => {
-    const [user, setUser] = React.useState<User | null>(null)
+    const [user, setUser] = useState<User | null>(null)
     
     useEvent({
       userLogged: (user: User) => setUser(user),
@@ -186,7 +189,7 @@ const [UserProvider, useUser] = state(
 
 const UserProfile = ({ id }) => (
   <UserProvider id={id}>
-    ...
+    {/* ... */}
   </UserProvider>
 )
 
