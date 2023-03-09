@@ -115,7 +115,7 @@ import { getUserById } from '../utils'
 
 const [UserProvider, useUser] = state(
   ({ id }) => {
-    const [user] = useState(getUserById(id))
+    const [user] = useState(() => getUserById(id))
     return user
   }
 )
