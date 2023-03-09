@@ -114,10 +114,9 @@ import { useState } from 'react'
 import { getUserById } from '../utils'
 
 const [UserProvider, useUser] = state(props => {
-    const [user] = useState(() => getUserById(props.id))
-    return user
-  }
-)
+  const [user] = useState(() => getUserById(props.id))
+  return user
+})
 
 const UserProfile = () => (
   <UserProvider id={2137}>
