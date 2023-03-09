@@ -112,6 +112,7 @@ subscriber.unsubscribe()
 The state hook allows you to pass any arguments into the context. It can be some initial state or you could even return it and pass it through to the components. All state prop changes will update the context and trigger component re-rendering **only when necessary**.
 
 ```tsx
+import { useState } from 'react'
 import { getUserById } from '../utils'
 
 const [UserProvider, useUser] = state(
@@ -133,6 +134,8 @@ const UserProfile = ({ id }) => (
 Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they re-render themselves.
 
 ```tsx
+import { useState, useCallback } from 'react'
+
 const [Provider, useStore] = state(
   () => {
     const [counter, setCounter] = useState(0);
@@ -158,8 +161,9 @@ Move your bussiness logic to the hook-based state using `@bit-about/state` + `@b
 Now you've got **completely type-safe side-effects**. Isn't that cool?
 
 ```tsx
+import { useState } from 'react'
 import { state } from '@bit-about/state'
-import { useEvent } from './auth-events' // Hook generated from events()
+import { useEvent } from './auth-events' // @bit-about/event hook
 import User from '../models/user'
 
 const [UserProvider, useUser] = state(
