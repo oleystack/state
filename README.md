@@ -97,15 +97,13 @@ const alice = store
   .get()
 
 // 🤌 Subscribe to the store and listen for changes
-const subscriber = store
+const subscription = store
   .select(state => state.alice)
   .subscribe(alice => console.log(alice))
   
 // remember to unsubscribe!
-subscriber.unsubscribe()
+subscription.unsubscribe()
 ```
-
-> NOTE: It's not necessary to fetch state inside the Provider - but it still needs to be placed somewhere to init the state.
 
 ## State props
 
