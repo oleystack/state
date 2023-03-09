@@ -178,12 +178,10 @@ const [UserProvider, useUser] = state(() => {
 import { useQuery } from 'react-query'
 import { fetchUser } from './user'
 
+const useUserQuery = (id) => useQuery(['user', id], () => fetchUser(id))
+
 const [UserProvider, useUser] = state(props => {
-  const { data: user } = useQuery(
-    ['user', props.id],
-    () => fetchUser(props.id)
-  )
-  
+  const { data: user } = useUserQuery(props.id)
   return user
 })
 
