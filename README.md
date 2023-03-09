@@ -83,7 +83,7 @@ const { alice, bob } = useStore(
 The third element of the `state()` result tuple is a `store` object. Store is a static helper which provides access to the state **without a hook**.
 
 ```jsx
-const [Provider, useStore, store] = state(...)
+const [Provider, useStore, store] = state(/* ... */)
 ```
 
 and then
