@@ -132,21 +132,19 @@ Please remember that functions defined without `React.useCallback` create themse
 ```tsx
 import { useState, useCallback } from 'react'
 
-const [Provider, useStore] = state(
-  () => {
-    const [counter, setCounter] = useState(0);
+const [Provider, useStore] = state(() => {
+  const [counter, setCounter] = useState(0);
    
-    // ✖️ It will re-render components every time
-    // const incrementCounter = () => setCounter(value => value + 1)
+  // ✖️ It will re-render components every time
+  // const incrementCounter = () => setCounter(value => value + 1)
 
-    const incrementCounter = useCallback(
-      () => setCounter(value => value + 1),
-      [setCounter]
-    )
+  const incrementCounter = useCallback(
+    () => setCounter(value => value + 1),
+    [setCounter]
+  )
 
-    return { counter, incrementCounter }
-  }
-)
+  return { counter, incrementCounter }
+})
 ```
 
 ## BitAboutState 💛 [BitAboutEvent](https://github.com/bit-about/event)
@@ -162,18 +160,16 @@ import { state } from '@bit-about/state'
 import { useEvent } from './auth-events' // @bit-about/event hook
 import User from '../models/user'
 
-const [UserProvider, useUser] = state(
-  () => {
-    const [user, setUser] = useState<User | null>(null)
+const [UserProvider, useUser] = state(() => {
+  const [user, setUser] = useState<User | null>(null)
     
-    useEvent({
-      userLogged: (user: User) => setUser(user),
-      userLoggout: () => setUser(null)
-    })
+  useEvent({
+    userLogged: (user: User) => setUser(user),
+    userLoggout: () => setUser(null)
+  })
     
-    return user
-  }
-)
+  return user
+})
 ```
 
 ## BitAboutState 💛 [React Query](https://github.com/tannerlinsley/react-query)
@@ -182,15 +178,13 @@ const [UserProvider, useUser] = state(
 import { useQuery } from 'react-query'
 import { fetchUser } from './user'
 
-const [UserProvider, useUser] = state(
-  ({ id }) => {
-    const { data: user } = useQuery(['user', id], () => fetchUser(id))
-    return user
-  }
-)
+const [UserProvider, useUser] = state(props => {
+  const { data: user } = useQuery(['user', props.id], () => fetchUser(props.id))
+  return user
+})
 
-const UserProfile = ({ id }) => (
-  <UserProvider id={id}>
+const UserProfile = () => (
+  <UserProvider id={2137}>
     {/* ... */}
   </UserProvider>
 )
