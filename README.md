@@ -39,18 +39,18 @@ const [Provider, useStore] = state(() => {
   return { alice, setAlice, bob, setBob }
 })
 
-// 3️⃣ Use the selector hook in component
-const Child = () => {
-  const alice = useStore(state => state.alice)
-  return <p>{alice}</p>
-}
-
 // 2️⃣ Wrap tree with Provider
 const App = () => (
   <Provider>
     <Child />
   </Provider>
 )
+
+// 3️⃣ Use the selector hook in component
+const Child = () => {
+  const alice = useStore(state => state.alice)
+  return <p>{alice}</p>
+}
 ```
 
 ## State selectors
