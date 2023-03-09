@@ -113,15 +113,14 @@ The state hook allows you to pass any arguments into the context. It can be some
 import { useState } from 'react'
 import { getUserById } from '../utils'
 
-const [UserProvider, useUser] = state(
-  ({ id }) => {
-    const [user] = useState(() => getUserById(id))
+const [UserProvider, useUser] = state(props => {
+    const [user] = useState(() => getUserById(props.id))
     return user
   }
 )
 
-const UserProfile = ({ id }) => (
-  <UserProvider id={id}>
+const UserProfile = () => (
+  <UserProvider id={2137}>
     {/* ... */}
   </UserProvider>
 )
