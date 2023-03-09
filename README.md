@@ -114,7 +114,7 @@ The state hook allows you to pass any arguments into the context. It can be some
 ```tsx
 const [UserProvider, useUser] = state(
   ({ id }) => {
-    const [user] = useState(() => getMyUserBy(id))
+    const [user] = useState(getMyUserBy(id))
     return user
   }
 )
