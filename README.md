@@ -60,7 +60,7 @@ const Child = () => {
 
 Access fine-grained control to the specific part of your state to re-render **only when necessary**.
 
-```jsx
+```tsx
 // 👍 Re-render when anything changed
 const { alice, bob } = useStore()
 
@@ -82,12 +82,12 @@ const { alice, bob } = useStore(
 
 The third element of the `state()` result tuple is a `store` object. Store is a static helper which provides access to the state **without a hook**.
 
-```jsx
+```tsx
 const [Provider, useStore, store] = state(/* ... */)
 ```
 
 and then
-```jsx
+```tsx
 // 👍 Get whole state
 const { alice } = store.get()
 
@@ -112,9 +112,11 @@ subscriber.unsubscribe()
 The state hook allows you to pass any arguments into the context. It can be some initial state or you could even return it and pass it through to the components. All state prop changes will update the context and trigger component re-rendering **only when necessary**.
 
 ```tsx
+import { getUserById } from '../utils'
+
 const [UserProvider, useUser] = state(
   ({ id }) => {
-    const [user] = useState(getMyUserBy(id))
+    const [user] = useState(getUserById(id))
     return user
   }
 )
@@ -130,7 +132,7 @@ const UserProfile = ({ id }) => (
 
 Please remember that functions defined without `React.useCallback` create themselves from scratch every time - which results in incorrect comparisons and components think the state has changed so they re-render themselves.
 
-```jsx
+```tsx
 const [Provider, useStore] = state(
   () => {
     const [counter, setCounter] = useState(0);
